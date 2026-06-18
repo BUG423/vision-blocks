@@ -1,0 +1,182 @@
+# SOTA - State-of-the-Art Neural Network Modules
+
+[![English](https://img.shields.io/badge/README-English-blue)](README_EN.md)
+[![中文](https://img.shields.io/badge/README-中文-red)](README.md)
+
+A systematically organized open-source repository of commonly used neural network modules, with a focus on computer vision and time-series data analysis tasks.
+
+> **Note**: This repository provides modules for different input formats via separate branches. The default `main` branch provides image processing modules, while the `bcl` branch provides time-series BCL format adapted modules:
+> ```bash
+> git checkout main  # Image format (default)
+> git checkout bcl   # Time-series BCL format
+> ```
+
+## Overview
+
+This project collects and implements popular plug-and-play neural network modules for computer vision and time-series data analysis, covering image classification, object detection, semantic segmentation, time-series analysis, and more. Each module includes clear documentation on its paper background, architectural design, PyTorch implementation, and test code. **All modules are originally designed.**
+
+## Directory Structure
+
+```
+SOTA/
+├── README.md
+├── README_EN.md
+├── resnet_insert_example.py
+└── blocks/
+    ├── SRM/  Selective Response Module
+    ├── DFA/  Differential Feature Amplifier
+    ├── CIM/  Contextual Information Modulator
+    ├── GFF/  Gated Feature Fusion
+    ├── DRS/  Dynamic Receptive Field Selector
+    ├── AFM/  Adaptive Frequency Modulation
+    ├── PFA/  Progressive Feature Aggregator
+    ├── SAM/  Spatial Affinity Module
+    ├── CRM/  Channel Recalibration Module
+    ├── LCR/  Local Context Reconstructor
+    ├── RIM/  Recursive Inference Module
+    ├── PDR/  Polarized Dual Representation
+    ├── SSM/  Saliency-Guided Suppression Module
+    ├── PGM/  Progressive Gating Module
+    ├── FEM/  Feature Equilibrium Module
+    ├── IGM/  Information Gathering Module
+    ├── RGM/  Reciprocal Guidance Module
+    ├── DSM/  Dual-Scale Modulator
+    ├── OEM/  Order-Statistic Enhancement Module
+    ├── MPM/  Momentum Propagation Module
+    ├── PCM/  Phase-Coherence Module
+    ├── CGM/  Conditional Gating Module
+    ├── IRM/  Information Routing Module
+    ├── BSM/  Bilateral Similarity Module
+    ├── DGM/  Diversity-Guided Module
+    ├── SUM/  Spatial Uncertainty Module
+    ├── AGM/  Adaptive Granularity Module
+    ├── RAM/  Residual Amplification Module
+    ├── TCM/  Tensor Completion Module
+    ├── NLM/  Non-local Modulation Module
+    ├── EDM/  Entropy-Driven Module
+    ├── FIM/  Frequency Importance Module
+    ├── HTM/  Hierarchical Transformation Module
+    ├── WAM/  Weighted Attention Module
+    ├── RCM/  Recursive Convolution Module
+    ├── CAM/  Contrast-Aware Module
+    ├── SDM/  Spectral Decomposition Module
+    ├── QEM/  Quantile Enhancement Module
+    ├── WDM/  Wavelet Decomposition Module
+    ├── KFM/  Kalman Filter Module
+    ├── RDM/  Reaction-Diffusion Module
+    ├── EEM/  Energy Equalization Module
+    ├── TSFM/ Temporal-Spatial Fusion Module
+    ├── LVM/  Local Variance Modulator
+    ├── BCL/  [BCL Branch] BCL Adapter & BCL-adapted Modules
+    └── ...
+```
+
+## Implemented Modules
+
+### Image Modules (main branch)
+
+| Date | Module | Full Name | Core Idea | Applications |
+|------|--------|-----------|-----------|-------------|
+| 05-27 | SRM | Selective Response Module | Group-wise statistics → position-sensitive channel modulation → soft-threshold sparsification | Classification/Detection/Segmentation |
+| 05-27 | DFA | Differential Feature Amplifier | Local neighborhood differences → difference-driven amplification → contrast sensitivity | Classification/Detection/Edge Detection |
+| 05-27 | CIM | Contextual Information Modulator | Dual-path (local + context) → spatially-adaptive mixing ratio | Classification/Detection/Segmentation |
+| 05-27 | GFF | Gated Feature Fusion | Three parallel transformations → joint spatial-channel gating → competitive fusion | Classification/Detection/Segmentation |
+| 05-27 | DRS | Dynamic Receptive Field Selector | Multi-dilation parallel branches → spatially-adaptive receptive field selection | Detection/Segmentation (multi-scale) |
+| 05-27 | AFM | Adaptive Frequency Modulation | Multi-kernel parallel → frequency band decomposition → spatially-adaptive frequency modulation | Classification/Detection/Image Restoration |
+| 05-27 | PFA | Progressive Feature Aggregator | Two-stage coarse-fine tuning → inter-stage information bridge → residual accumulation | Classification/Detection/Segmentation |
+| 05-27 | SAM | Spatial Affinity Module | Low-rank projection → affinity matrix → information propagation → global context | Segmentation/Detection/Generation |
+| 05-27 | CRM | Channel Recalibration Module | Activation entropy estimation → entropy-guided channel evaluation → redundancy suppression | Classification/Detection/Segmentation |
+| 05-27 | LCR | Local Context Reconstructor | Per-position dynamic neighborhood weights → dedicated local convolution kernel → adaptive aggregation | Classification/Detection/Segmentation |
+| 05-28 | RIM | Recursive Inference Module | Weight-shared recursive transformation → iterative embedding → residual accumulation refinement | Classification/Detection/Segmentation |
+| 05-28 | PDR | Polarized Dual Representation | Spatial/semantic dual pathways → cross gating → polarized feature fusion | Classification/Detection/Segmentation |
+| 05-28 | SSM | Saliency-Guided Suppression Module | Saliency detection → adaptive threshold → soft suppression → information budget reallocation | Classification/Detection/Segmentation |
+| 05-29 | PGM | Progressive Gating Module | Three-stage cascaded gating (coarse→medium→fine) → channel-wise adaptive fusion | Classification/Detection/Segmentation |
+| 05-29 | FEM | Feature Equilibrium Module | Channel statistics encoding → equilibrium energy learning → exponential smoothing adjustment | Classification/Detection/Segmentation |
+| 05-29 | IGM | Information Gathering Module | Multi-scale depthwise separable gathering → spatially-adaptive scale weights | Classification/Detection/Segmentation |
+| 05-30 | RGM | Reciprocal Guidance Module | Channel-spatial dual-branch reciprocal guidance → bidirectional information modulation | Classification/Detection/Segmentation |
+| 05-30 | DSM | Dual-Scale Modulator | Coarse-fine dual-scale mutual modulation → context guidance + detail reinjection | Classification/Detection/Segmentation |
+| 05-30 | OEM | Order-Statistic Enhancement Module | Multi-order statistic extraction → spatially-adaptive statistic selection → robust enhancement | Classification/Detection/Segmentation |
+| 05-31 | MPM | Momentum Propagation Module | Large-kernel smoothed momentum reference → transient deviation awareness → adaptive modulation | Classification/Detection/Segmentation |
+| 05-31 | PCM | Phase-Coherence Module | FFT frequency domain decoupling → amplitude recalibration + phase coherence enhancement | Classification/Detection/Segmentation |
+| 05-31 | CGM | Conditional Gating Module | Learnable conditional prototypes → similarity-driven gating → semantic reference enhancement | Classification/Detection/Segmentation |
+| 06-01 | IRM | Information Routing Module | Multi-expert content-aware routing → spatially-adaptive mixture of experts | Classification/Detection/Segmentation |
+| 06-01 | BSM | Bilateral Similarity Module | K×K neighborhood content similarity → bilateral adaptive weighted aggregation | Classification/Detection/Segmentation |
+| 06-01 | DGM | Diversity-Guided Module | Channel Gram matrix → redundancy score-driven modulation → diversity enhancement | Classification/Detection/Segmentation |
+| 06-03 | SUM | Spatial Uncertainty Module | Local uncertainty estimation → uncertainty-guided smoothing/preservation dual-path fusion | Classification/Detection/Segmentation |
+| 06-03 | AGM | Adaptive Granularity Module | Granularity preference map → coarse-fine dual branch → spatially-adaptive granularity interpolation | Classification/Detection/Segmentation |
+| 06-03 | RAM | Residual Amplification Module | Base-residual decomposition → residual information analysis → content-aware amplification/suppression | Classification/Detection/Segmentation |
+| 06-06 | TCM | Tensor Completion Module | Low-rank tensor decomposition → signal subspace completion → structure-preserving fusion | Classification/Detection/Segmentation |
+| 06-06 | NLM | Non-local Modulation Module | QKV projection → non-local affinity → modulation signal generation → residual modulation | Classification/Detection/Segmentation |
+| 06-06 | EDM | Entropy-Driven Module | Local information entropy estimation → entropy-guided enhancement/compression → adaptive resource allocation | Classification/Detection/Segmentation |
+| 06-06 | FIM | Frequency Importance Module | DCT frequency domain decomposition → frequency importance learning → spectral recalibration → IDCT | Classification/Detection/Segmentation |
+| 06-06 | HTM | Hierarchical Transformation Module | Three-stage progressive transformation → information bridging → adaptive stage fusion | Classification/Detection/Segmentation |
+| 06-06 | WAM | Weighted Attention Module | Four-mode parallel attention → mode fusion weight learning → adaptive combination | Classification/Detection/Segmentation |
+| 06-06 | RCM | Recursive Convolution Module | Weight-shared recursive convolution → termination gate → spatially-adaptive processing depth | Classification/Detection/Segmentation |
+| 06-06 | CAM | Contrast-Aware Module | Local contrast estimation → sharpening/smoothing dual path → contrast-guided fusion | Classification/Detection/Segmentation |
+| 06-06 | SDM | Spectral Decomposition Module | Channel covariance spectral decomposition → subspace separation → spectral-domain adaptive filtering | Classification/Detection/Segmentation |
+| 06-06 | QEM | Quantile Enhancement Module | Quantile estimation → robust quantile normalization → distribution-aware enhancement | Classification/Detection/Segmentation |
+| 06-18 | WDM | Wavelet Decomposition Module | Haar DWT subband decomposition → low-freq channel refinement + high-freq soft-threshold denoising → IDWT reconstruction | Classification/Detection/Segmentation/Image Restoration |
+| 06-18 | KFM | Kalman Filter Module | Transition-based state prediction → innovation → adaptive Kalman gain blend of prediction & observation | Classification/Detection/Segmentation/Image Restoration |
+| 06-18 | RDM | Reaction-Diffusion Module | Activator/inhibitor dual-field → Laplacian diffusion + nonlinear reaction → iterative Turing dynamics | Classification/Detection/Segmentation |
+| 06-18 | EEM | Energy Equalization Module | Channel energy statistics → adaptive scaling → energy-aware dual-path equalization | Classification/Detection/Segmentation |
+| 06-18 | TSFM | Temporal-Spatial Fusion Module | Spatial/semantic dual-path encoding → cross-attention fusion → bidirectional spatial-channel modulation | Classification/Detection/Segmentation |
+| 06-18 | LVM | Local Variance Modulator | Multi-scale variance estimation → variance-aware dual-path modulation → adaptive detail/suppression fusion | Classification/Detection/Segmentation |
+
+### BCL Time-Series Modules (bcl branch only)
+
+| Date | Module | Full Name | Core Idea | Applications |
+|------|--------|-----------|-----------|-------------|
+| 06-18 | BCL | Block Chain Ledger Adapter | BCL format parsing → temporal-spatial reshaping → quality gate → channel normalization | Time-Series Classification/Anomaly Detection/Prediction |
+| 06-18 | EEM-BCL | Energy Equalization Module (BCL) | Temporal + channel energy equalization → joint fusion → energy conservation | Time-Series Analysis |
+| 06-18 | TSFM-BCL | Temporal-Spatial Fusion Module (BCL) | Temporal-channel cross-attention → multi-scale temporal receptive field → gated fusion | Time-Series Analysis |
+| 06-18 | LVM-BCL | Local Variance Modulator (BCL) | Multi-scale temporal variance → high-variance enhancement + low-variance suppression → adaptive mixing | Time-Series Analysis |
+
+## Usage
+
+### Image Format (main branch)
+
+```python
+from blocks.RIM.rim import RIM
+import torch
+
+rim = RIM(channels=64, num_iterations=3)
+x = torch.randn(1, 64, 32, 32)
+out = rim(x)
+print(out.shape)  # [1, 64, 32, 32]
+```
+
+### BCL Time-Series Format (bcl branch)
+
+```python
+from blocks.BCL.bcl_adapter import BCLAdapter
+from blocks.BCL.eem_bcl import EEM_BCL
+import torch
+
+# BCL data format: [batch, channels, time_steps]
+bcl_data = torch.randn(1, 16, 128)
+quality_mask = torch.ones_like(bcl_data)
+
+# Step 1: Adapt BCL format
+adapter = BCLAdapter(in_channels=16, out_channels=64)
+adapted = adapter(bcl_data, quality_mask)
+print(adapted.shape)  # [1, 64, 128, 1]
+
+# Step 2: Process with BCL-adapted modules
+eem = EEM_BCL(channels=64, seq_len=128)
+enhanced = eem(bcl_data)
+print(enhanced.shape)  # [1, 64, 128]
+```
+
+## Requirements
+
+- Python >= 3.8
+- PyTorch >= 1.10
+- thop (optional, for FLOPs statistics)
+
+## Contributing
+
+Pull requests for new neural network modules are welcome. Please refer to the format of existing modules under `blocks/` and ensure complete documentation and test code are included.
+
+## License
+
+MIT License
