@@ -5,9 +5,27 @@
 
 A systematically organized open-source repository of commonly used neural network modules, with a focus on computer vision tasks.
 
+## Branch Structure
+
+This repository provides modules for different input formats via separate branches:
+
+| Branch | Input Format | Description | Use Case |
+|--------|-------------|-------------|----------|
+| `main` | WeChat Image Format | Standard CNN modules for image processing | Image classification, detection, segmentation |
+| `bcl` | Time-Series BCL Format | Adapted modules for BCL time-series data | IoT sensors, financial data, industrial monitoring |
+
+**Switch branches to get modules tailored for your data format:**
+```bash
+# For WeChat image format (default)
+git checkout main
+
+# For time-series BCL format
+git checkout bcl
+```
+
 ## Overview
 
-This project collects and implements popular plug-and-play neural network modules for computer vision, covering image classification, object detection, semantic segmentation, and more. Each module includes clear documentation on its paper background, architectural design, PyTorch implementation, and test code. **All modules are originally designed.**
+This project collects and implements popular plug-and-play neural network modules, covering image classification, object detection, semantic segmentation, time-series analysis, and more. Each module includes clear documentation on its paper background, architectural design, PyTorch implementation, and test code. **All modules are originally designed.**
 
 ## Directory Structure
 
@@ -61,10 +79,13 @@ SOTA/
     ├── EEM/  Energy Equalization Module
     ├── TSFM/ Temporal-Spatial Fusion Module
     ├── LVM/  Local Variance Modulator
+    ├── BCL/  [BCL Branch] BCL Adapter & BCL-adapted Modules
     └── ...
 ```
 
 ## Implemented Modules
+
+### Image Modules (main branch)
 
 | Date | Module | Full Name | Core Idea | Applications |
 |------|--------|-----------|-----------|-------------|
@@ -113,9 +134,18 @@ SOTA/
 | 06-18 | TSFM | Temporal-Spatial Fusion Module | Spatial/semantic dual-path encoding → cross-attention fusion → bidirectional spatial-channel modulation | Classification/Detection/Segmentation |
 | 06-18 | LVM | Local Variance Modulator | Multi-scale variance estimation → variance-aware dual-path modulation → adaptive detail/suppression fusion | Classification/Detection/Segmentation |
 
+### BCL Time-Series Modules (bcl branch only)
+
+| Date | Module | Full Name | Core Idea | Applications |
+|------|--------|-----------|-----------|-------------|
+| 06-18 | BCL | Block Chain Ledger Adapter | BCL format parsing → temporal-spatial reshaping → quality gate → channel normalization | Time-Series Classification/Anomaly Detection/Prediction |
+| 06-18 | EEM-BCL | Energy Equalization Module (BCL) | Temporal + channel energy equalization → joint fusion → energy conservation | Time-Series Analysis |
+| 06-18 | TSFM-BCL | Temporal-Spatial Fusion Module (BCL) | Temporal-channel cross-attention → multi-scale temporal receptive field → gated fusion | Time-Series Analysis |
+| 06-18 | LVM-BCL | Local Variance Modulator (BCL) | Multi-scale temporal variance → high-variance enhancement + low-variance suppression → adaptive mixing | Time-Series Analysis |
+
 ## Usage
 
-Each module can be used as a plug-and-play component embedded into existing networks:
+### Image Format (main branch)
 
 ```python
 from blocks.RIM.rim import RIM
@@ -125,6 +155,28 @@ rim = RIM(channels=64, num_iterations=3)
 x = torch.randn(1, 64, 32, 32)
 out = rim(x)
 print(out.shape)  # [1, 64, 32, 32]
+```
+
+### BCL Time-Series Format (bcl branch)
+
+```python
+from blocks.BCL.bcl_adapter import BCLAdapter
+from blocks.BCL.eem_bcl import EEM_BCL
+import torch
+
+# BCL data: [batch, channels, time_steps]
+bcl_data = torch.randn(1, 16, 128)
+quality_mask = torch.ones_like(bcl_data)
+
+# Step 1: Adapt BCL format
+adapter = BCLAdapter(in_channels=16, out_channels=64)
+adapted = adapter(bcl_data, quality_mask)
+print(adapted.shape)  # [1, 64, 128, 1]
+
+# Step 2: Process with BCL-adapted modules
+eem = EEM_BCL(channels=64, seq_len=128)
+enhanced = eem(bcl_data)
+print(enhanced.shape)  # [1, 64, 128]
 ```
 
 ## Requirements

@@ -3,17 +3,36 @@
 [![English](https://img.shields.io/badge/README-English-blue)](README.md)
 [![中文](https://img.shields.io/badge/README-中文-red)](README_CN.md)
 
-一个系统整理、复现和开发常用神经网络模块的开源仓库，重点面向计算机视觉任务。
+一个系统整理、复现和开发常用神经网络模块的开源仓库，重点面向计算机视觉和时序数据分析任务。
+
+## 分支结构
+
+本仓库通过不同分支提供针对不同输入格式的模块：
+
+| 分支 | 输入格式 | 说明 | 适用场景 |
+|------|---------|------|---------|
+| `main` | 微信图像格式 | 标准 CNN 图像处理模块 | 图像分类、检测、分割 |
+| `bcl` | 时序 BCL 格式 | 针对 BCL 时序数据适配的模块 | 物联网传感器、金融数据、工业监控 |
+
+**切换分支以获取针对您数据格式的模块：**
+```bash
+# 微信图像格式（默认）
+git checkout main
+
+# 时序 BCL 格式
+git checkout bcl
+```
 
 ## 项目简介
 
-本项目收集和实现了计算机视觉领域常见的即插即用神经网络模块，涵盖图像分类、目标检测、语义分割等方向。每个模块都包含清晰的论文背景说明、结构设计说明、PyTorch 代码实现和测试代码。**所有模块均为原创设计。**
+本项目收集和实现了计算机视觉和时序数据分析领域常见的即插即用神经网络模块，涵盖图像分类、目标检测、语义分割、时序分析等方向。每个模块都包含清晰的论文背景说明、结构设计说明、PyTorch 代码实现和测试代码。**所有模块均为原创设计。**
 
 ## 目录结构
 
 ```
 SOTA/
 ├── README.md
+├── README_CN.md
 ├── resnet_insert_example.py
 └── blocks/
     ├── SRM/  选择性响应模块
@@ -57,10 +76,13 @@ SOTA/
     ├── EEM/  能量均衡模块
     ├── TSFM/ 时序-空间融合模块
     ├── LVM/  局部方差调制模块
+    ├── BCL/  [BCL分支] BCL适配器及BCL适配模块
     └── ...
 ```
 
 ## 已实现模块
+
+### 图像模块（main 分支）
 
 | 日期 | 模块 | 全称 | 核心思想 | 适用任务 |
 |------|------|------|----------|----------|
@@ -106,9 +128,18 @@ SOTA/
 | 06-18 | TSFM | Temporal-Spatial Fusion Module | 空间/语义双路径编码→交叉注意力融合→双向空间-通道调制 | 分类/检测/分割 |
 | 06-18 | LVM | Local Variance Modulator | 多尺度方差估计→方差感知双路径调制→自适应细节/抑制融合 | 分类/检测/分割 |
 
+### BCL 时序模块（仅 bcl 分支）
+
+| 日期 | 模块 | 全称 | 核心思想 | 适用任务 |
+|------|------|------|----------|----------|
+| 06-18 | BCL | Block Chain Ledger Adapter | BCL格式解析→时序-空间重塑→质量门控→通道归一化 | 时序分类/异常检测/预测 |
+| 06-18 | EEM-BCL | Energy Equalization Module (BCL) | 时间+通道能量均衡→联合融合→能量守恒 | 时序分析 |
+| 06-18 | TSFM-BCL | Temporal-Spatial Fusion Module (BCL) | 时间-通道交叉注意力→多尺度时间感受野→门控融合 | 时序分析 |
+| 06-18 | LVM-BCL | Local Variance Modulator (BCL) | 多尺度时间方差→高方差增强+低方差抑制→自适应混合 | 时序分析 |
+
 ## 使用方法
 
-每个模块均可作为即插即用组件嵌入现有网络：
+### 图像格式（main 分支）
 
 ```python
 from blocks.RIM.rim import RIM
@@ -118,6 +149,28 @@ rim = RIM(channels=64, num_iterations=3)
 x = torch.randn(1, 64, 32, 32)
 out = rim(x)
 print(out.shape)  # [1, 64, 32, 32]
+```
+
+### BCL 时序格式（bcl 分支）
+
+```python
+from blocks.BCL.bcl_adapter import BCLAdapter
+from blocks.BCL.eem_bcl import EEM_BCL
+import torch
+
+# BCL 数据格式: [batch, channels, time_steps]
+bcl_data = torch.randn(1, 16, 128)
+quality_mask = torch.ones_like(bcl_data)
+
+# 第一步：适配 BCL 格式
+adapter = BCLAdapter(in_channels=16, out_channels=64)
+adapted = adapter(bcl_data, quality_mask)
+print(adapted.shape)  # [1, 64, 128, 1]
+
+# 第二步：使用 BCL 适配模块处理
+eem = EEM_BCL(channels=64, seq_len=128)
+enhanced = eem(bcl_data)
+print(enhanced.shape)  # [1, 64, 128]
 ```
 
 ## 环境依赖
