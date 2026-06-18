@@ -55,6 +55,12 @@ SOTA/
     ├── CAM/  Contrast-Aware Module
     ├── SDM/  Spectral Decomposition Module
     ├── QEM/  Quantile Enhancement Module
+    ├── WDM/  Wavelet Decomposition Module
+    ├── KFM/  Kalman Filter Module
+    ├── RDM/  Reaction-Diffusion Module
+    ├── EEM/  Energy Equalization Module
+    ├── TSFM/ Temporal-Spatial Fusion Module
+    ├── LVM/  Local Variance Modulator
     └── ...
 ```
 
@@ -100,6 +106,12 @@ SOTA/
 | 06-06 | CAM | Contrast-Aware Module | Local contrast estimation → sharpening/smoothing dual path → contrast-guided fusion | Classification/Detection/Segmentation |
 | 06-06 | SDM | Spectral Decomposition Module | Channel covariance spectral decomposition → subspace separation → spectral-domain adaptive filtering | Classification/Detection/Segmentation |
 | 06-06 | QEM | Quantile Enhancement Module | Quantile estimation → robust quantile normalization → distribution-aware enhancement | Classification/Detection/Segmentation |
+| 06-18 | WDM | Wavelet Decomposition Module | Haar DWT subband decomposition → low-freq channel refinement + high-freq soft-threshold denoising → IDWT reconstruction | Classification/Detection/Segmentation/Image Restoration |
+| 06-18 | KFM | Kalman Filter Module | Transition-based state prediction → innovation → adaptive Kalman gain blend of prediction & observation | Classification/Detection/Segmentation/Image Restoration |
+| 06-18 | RDM | Reaction-Diffusion Module | Activator/inhibitor dual-field → Laplacian diffusion + nonlinear reaction → iterative Turing dynamics | Classification/Detection/Segmentation |
+| 06-18 | EEM | Energy Equalization Module | Channel energy statistics → adaptive scaling → energy-aware dual-path equalization | Classification/Detection/Segmentation |
+| 06-18 | TSFM | Temporal-Spatial Fusion Module | Spatial/semantic dual-path encoding → cross-attention fusion → bidirectional spatial-channel modulation | Classification/Detection/Segmentation |
+| 06-18 | LVM | Local Variance Modulator | Multi-scale variance estimation → variance-aware dual-path modulation → adaptive detail/suppression fusion | Classification/Detection/Segmentation |
 
 ## Usage
 

@@ -54,6 +54,9 @@ SOTA/
     ├── CAM/  对比度感知模块
     ├── SDM/  谱分解模块
     ├── QEM/  分位数增强模块
+    ├── EEM/  能量均衡模块
+    ├── TSFM/ 时序-空间融合模块
+    ├── LVM/  局部方差调制模块
     └── ...
 ```
 
@@ -99,6 +102,9 @@ SOTA/
 | 06-06 | CAM | Contrast-Aware Module | 局部对比度估计→锐化/平滑双路径→对比度引导融合 | 分类/检测/分割 |
 | 06-06 | SDM | Spectral Decomposition Module | 通道协方差谱分解→子空间分离→谱域自适应滤波 | 分类/检测/分割 |
 | 06-06 | QEM | Quantile Enhancement Module | 分位数估计→鲁棒分位数归一化→分布感知增强 | 分类/检测/分割 |
+| 06-18 | EEM | Energy Equalization Module | 通道能量统计→自适应缩放→能量感知双路径均衡 | 分类/检测/分割 |
+| 06-18 | TSFM | Temporal-Spatial Fusion Module | 空间/语义双路径编码→交叉注意力融合→双向空间-通道调制 | 分类/检测/分割 |
+| 06-18 | LVM | Local Variance Modulator | 多尺度方差估计→方差感知双路径调制→自适应细节/抑制融合 | 分类/检测/分割 |
 
 ## 使用方法
 
