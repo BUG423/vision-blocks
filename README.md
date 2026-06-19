@@ -124,6 +124,9 @@ SOTA/
 | 06-18 | EEM-BCL | Energy Equalization Module (BCL) | 时间+通道能量均衡→联合融合→能量守恒 | 时序分析 |
 | 06-18 | TSFM-BCL | Temporal-Spatial Fusion Module (BCL) | 时间-通道交叉注意力→多尺度时间感受野→门控融合 | 时序分析 |
 | 06-18 | LVM-BCL | Local Variance Modulator (BCL) | 多尺度时间方差→高方差增强+低方差抑制→自适应混合 | 时序分析 |
+| 06-19 | CFM-BCL | Channel Frequency Mixer (BCL) | DCT时间频率变换→可学习频率混合矩阵→跨通道频率信息交换 | 时序分析 |
+| 06-19 | SGM-BCL | Spatial Gradient Modulator (BCL) | 1D差分梯度提取→梯度幅值-方向联合编码→方向感知特征调制 | 时序分析 |
+| 06-19 | DEM-BCL | Dense Evolution Module (BCL) | 多尺度变异生成→信息熵适应度评估→Top-k自然选择→进化融合 | 时序分析 |
 
 ## 使用方法
 

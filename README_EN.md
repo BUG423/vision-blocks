@@ -130,6 +130,9 @@ SOTA/
 | 06-18 | EEM-BCL | Energy Equalization Module (BCL) | Temporal + channel energy equalization → joint fusion → energy conservation | Time-Series Analysis |
 | 06-18 | TSFM-BCL | Temporal-Spatial Fusion Module (BCL) | Temporal-channel cross-attention → multi-scale temporal receptive field → gated fusion | Time-Series Analysis |
 | 06-18 | LVM-BCL | Local Variance Modulator (BCL) | Multi-scale temporal variance → high-variance enhancement + low-variance suppression → adaptive mixing | Time-Series Analysis |
+| 06-19 | CFM-BCL | Channel Frequency Mixer (BCL) | DCT temporal frequency transform → learnable frequency mixing matrix → cross-channel frequency information exchange | Time-Series Analysis |
+| 06-19 | SGM-BCL | Spatial Gradient Modulator (BCL) | 1D difference gradient extraction → gradient magnitude-direction joint encoding → direction-aware feature modulation | Time-Series Analysis |
+| 06-19 | DEM-BCL | Dense Evolution Module (BCL) | Multi-scale variation generation → information entropy fitness evaluation → Top-k natural selection → evolution fusion | Time-Series Analysis |
 
 ## Usage
 
