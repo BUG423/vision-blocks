@@ -127,6 +127,16 @@ SOTA/
 | 06-19 | CFM-BCL | Channel Frequency Mixer (BCL) | DCT时间频率变换→可学习频率混合矩阵→跨通道频率信息交换 | 时序分析 |
 | 06-19 | SGM-BCL | Spatial Gradient Modulator (BCL) | 1D差分梯度提取→梯度幅值-方向联合编码→方向感知特征调制 | 时序分析 |
 | 06-19 | DEM-BCL | Dense Evolution Module (BCL) | 多尺度变异生成→信息熵适应度评估→Top-k自然选择→进化融合 | 时序分析 |
+| 06-19 | PAM-BCL | Phase Alignment Module (BCL) | Gabor相位估计→自适应相位偏移→相位一致性约束→残差融合 | 时序分析 |
+| 06-19 | FGM-BCL | Feature Gating Module (BCL) | 协作门控→局部上下文感知→双向通道交互→稀疏激活 | 时序分析 |
+| 06-19 | MCM-BCL | Multi-Scale Context Module (BCL) | 多尺度并行提取→自适应尺度权重→尺度间交互→全局-局部融合 | 时序分析 |
+| 06-19 | DWM-BCL | Dynamic Weight Module (BCL) | 内容编码→调制因子预测→渐进式调制→平滑性约束 | 时序分析 |
+| 06-19 | ERM-BCL | Edge Response Module (BCL) | 可学习边缘检测→边缘增强→边缘-非边缘分离→自适应融合 | 时序分析 |
+| 06-19 | STM-BCL | Spatial-Channel Transformer Module (BCL) | 时间-通道联合编码→双向交叉注意力→位置编码增强→多头变换 | 时序分析 |
+| 06-19 | LHM-BCL | Local Histogram Module (BCL) | 可微分soft binning→局部分布统计→分布感知增强→残差融合 | 时序分析 |
+| 06-19 | CCM-BCL | Channel Correlation Module (BCL) | 通道相关性矩阵→低秩近似→相关性引导增强→正则化 | 时序分析 |
+| 06-19 | RVM-BCL | Random Variation Module (BCL) | 可控随机注入→温度控制→特征级增强→方差保持归一化 | 时序分析 |
+| 06-19 | KSM-BCL | Kernel Selection Module (BCL) | 位置感知核选择→可微分软选择→多尺度并行→稀疏正则化 | 时序分析 |
 
 ## 使用方法
 

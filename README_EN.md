@@ -133,6 +133,16 @@ SOTA/
 | 06-19 | CFM-BCL | Channel Frequency Mixer (BCL) | DCT temporal frequency transform → learnable frequency mixing matrix → cross-channel frequency information exchange | Time-Series Analysis |
 | 06-19 | SGM-BCL | Spatial Gradient Modulator (BCL) | 1D difference gradient extraction → gradient magnitude-direction joint encoding → direction-aware feature modulation | Time-Series Analysis |
 | 06-19 | DEM-BCL | Dense Evolution Module (BCL) | Multi-scale variation generation → information entropy fitness evaluation → Top-k natural selection → evolution fusion | Time-Series Analysis |
+| 06-19 | PAM-BCL | Phase Alignment Module (BCL) | Gabor phase estimation → adaptive phase shift → phase consistency constraint → residual fusion | Time-Series Analysis |
+| 06-19 | FGM-BCL | Feature Gating Module (BCL) | Cooperative gating → local context awareness → bidirectional channel interaction → sparse activation | Time-Series Analysis |
+| 06-19 | MCM-BCL | Multi-Scale Context Module (BCL) | Multi-scale parallel extraction → adaptive scale weights → scale interaction → global-local fusion | Time-Series Analysis |
+| 06-19 | DWM-BCL | Dynamic Weight Module (BCL) | Content encoding → modulation factor prediction → progressive modulation → smoothness constraint | Time-Series Analysis |
+| 06-19 | ERM-BCL | Edge Response Module (BCL) | Learnable edge detection → edge enhancement → edge-nonedge separation → adaptive fusion | Time-Series Analysis |
+| 06-19 | STM-BCL | Spatial-Channel Transformer Module (BCL) | Temporal-channel joint encoding → bidirectional cross-attention → position encoding enhancement → multi-head transform | Time-Series Analysis |
+| 06-19 | LHM-BCL | Local Histogram Module (BCL) | Differentiable soft binning → local distribution statistics → distribution-aware enhancement → residual fusion | Time-Series Analysis |
+| 06-19 | CCM-BCL | Channel Correlation Module (BCL) | Channel correlation matrix → low-rank approximation → correlation-guided enhancement → regularization | Time-Series Analysis |
+| 06-19 | RVM-BCL | Random Variation Module (BCL) | Controlled random injection → temperature control → feature-level enhancement → variance-preserving normalization | Time-Series Analysis |
+| 06-19 | KSM-BCL | Kernel Selection Module (BCL) | Position-aware kernel selection → differentiable soft selection → multi-scale parallel → sparse regularization | Time-Series Analysis |
 
 ## Usage
 
