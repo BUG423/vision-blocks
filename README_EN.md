@@ -117,6 +117,9 @@ SOTA/
 | 06-18 | EEM | Energy Equalization Module | Channel energy statistics → adaptive scaling → energy-aware dual-path equalization | Classification/Detection/Segmentation |
 | 06-18 | TSFM | Temporal-Spatial Fusion Module | Spatial/semantic dual-path encoding → cross-attention fusion → bidirectional spatial-channel modulation | Classification/Detection/Segmentation |
 | 06-18 | LVM | Local Variance Modulator | Multi-scale variance estimation → variance-aware dual-path modulation → adaptive detail/suppression fusion | Classification/Detection/Segmentation |
+| 06-19 | CFM | Channel Frequency Mixer | DCT frequency transform → learnable frequency mixing matrix → cross-channel frequency information exchange | Classification/Detection/Segmentation |
+| 06-19 | SGM | Spatial Gradient Modulator | Sobel gradient extraction → gradient magnitude-direction joint encoding → direction-aware feature modulation | Classification/Detection/Segmentation/Edge Detection |
+| 06-19 | DEM | Dense Evolution Module | Multi-scale variation generation → information entropy fitness evaluation → Top-k natural selection → evolution fusion | Classification/Detection/Segmentation |
 
 ## Usage
 

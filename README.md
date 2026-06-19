@@ -111,6 +111,9 @@ SOTA/
 | 06-18 | EEM | Energy Equalization Module | 通道能量统计→自适应缩放→能量感知双路径均衡 | 分类/检测/分割 |
 | 06-18 | TSFM | Temporal-Spatial Fusion Module | 空间/语义双路径编码→交叉注意力融合→双向空间-通道调制 | 分类/检测/分割 |
 | 06-18 | LVM | Local Variance Modulator | 多尺度方差估计→方差感知双路径调制→自适应细节/抑制融合 | 分类/检测/分割 |
+| 06-19 | CFM | Channel Frequency Mixer | DCT频域变换→可学习频率混合矩阵→跨通道频率信息交换 | 分类/检测/分割 |
+| 06-19 | SGM | Spatial Gradient Modulator | Sobel梯度提取→梯度幅值-方向联合编码→方向感知特征调制 | 分类/检测/分割/边缘检测 |
+| 06-19 | DEM | Dense Evolution Module | 多尺度变异生成→信息熵适应度评估→Top-k自然选择→进化融合 | 分类/检测/分割 |
 
 ## 使用方法
 
