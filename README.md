@@ -137,6 +137,16 @@ SOTA/
 | 06-19 | CCM-BCL | Channel Correlation Module (BCL) | 通道相关性矩阵→低秩近似→相关性引导增强→正则化 | 时序分析 |
 | 06-19 | RVM-BCL | Random Variation Module (BCL) | 可控随机注入→温度控制→特征级增强→方差保持归一化 | 时序分析 |
 | 06-19 | KSM-BCL | Kernel Selection Module (BCL) | 位置感知核选择→可微分软选择→多尺度并行→稀疏正则化 | 时序分析 |
+| 06-20 | OSM-BCL | Offset Spatial Mixing (BCL) | 时序偏移学习→偏移连续性约束→多尺度偏移融合→偏移感知聚合 | 时序分析 |
+| 06-20 | VGM-BCL | Variational Gaussian Mixing (BCL) | 高斯分布建模→变分推断→不确定性感知混合→采样增强 | 时序分析 |
+| 06-20 | ABM-BCL | Adaptive Batch Module (BCL) | 内容感知统计量→双重调制→轻量级预测→渐进式归一化 | 时序分析 |
+| 06-20 | BFM-BCL | Batch Fusion Module (BCL) | 批内统计→样本间注意力→自适应融合→计算高效 | 时序分析 |
+| 06-20 | CVM-BCL | Channel Variance Module (BCL) | 通道方差估计→方差引导增强→方差归一化→残差融合 | 时序分析 |
+| 06-20 | DPM-BCL | Dense Prediction Module (BCL) | 全局-局部融合→自适应权重→密集预测头→多任务支持 | 时序分析 |
+| 06-20 | FTM-BCL | Frequency Transform Module (BCL) | 轻量级Haar变换→频带选择→频域增强→逆变换融合 | 时序分析 |
+| 06-20 | GCM-BCL | Gradient Correlation Module (BCL) | 多方向梯度→梯度相关性计算→相关性引导增强→结构保持 | 时序分析 |
+| 06-20 | JRM-BCL | Joint Reasoning Module (BCL) | 多关系建模→关系交互→联合推理→推理门控 | 时序分析 |
+| 06-20 | NAM-BCL | Neural Attention Module (BCL) | 多尺度注意力→尺度间交互→注意力融合→神经调制 | 时序分析 |
 
 ## 使用方法
 

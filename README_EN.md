@@ -143,6 +143,16 @@ SOTA/
 | 06-19 | CCM-BCL | Channel Correlation Module (BCL) | Channel correlation matrix → low-rank approximation → correlation-guided enhancement → regularization | Time-Series Analysis |
 | 06-19 | RVM-BCL | Random Variation Module (BCL) | Controlled random injection → temperature control → feature-level enhancement → variance-preserving normalization | Time-Series Analysis |
 | 06-19 | KSM-BCL | Kernel Selection Module (BCL) | Position-aware kernel selection → differentiable soft selection → multi-scale parallel → sparse regularization | Time-Series Analysis |
+| 06-20 | OSM-BCL | Offset Spatial Mixing (BCL) | Temporal offset learning → offset continuity constraint → multi-scale offset fusion → offset-aware aggregation | Time-Series Analysis |
+| 06-20 | VGM-BCL | Variational Gaussian Mixing (BCL) | Gaussian distribution modeling → variational inference → uncertainty-aware mixing → sampling augmentation | Time-Series Analysis |
+| 06-20 | ABM-BCL | Adaptive Batch Module (BCL) | Content-aware statistics → dual modulation → lightweight prediction → progressive normalization | Time-Series Analysis |
+| 06-20 | BFM-BCL | Batch Fusion Module (BCL) | Batch statistics → inter-sample attention → adaptive fusion → computation efficient | Time-Series Analysis |
+| 06-20 | CVM-BCL | Channel Variance Module (BCL) | Channel variance estimation → variance-guided enhancement → variance normalization → residual fusion | Time-Series Analysis |
+| 06-20 | DPM-BCL | Dense Prediction Module (BCL) | Global-local fusion → adaptive weights → dense prediction head → multi-task support | Time-Series Analysis |
+| 06-20 | FTM-BCL | Frequency Transform Module (BCL) | Lightweight Haar transform → band selection → frequency enhancement → inverse transform fusion | Time-Series Analysis |
+| 06-20 | GCM-BCL | Gradient Correlation Module (BCL) | Multi-direction gradients → gradient correlation calculation → correlation-guided enhancement → structure preservation | Time-Series Analysis |
+| 06-20 | JRM-BCL | Joint Reasoning Module (BCL) | Multi-relation modeling → relation interaction → joint reasoning → reasoning gate | Time-Series Analysis |
+| 06-20 | NAM-BCL | Neural Attention Module (BCL) | Multi-scale attention → scale interaction → attention fusion → neural modulation | Time-Series Analysis |
 
 ## Usage
 
