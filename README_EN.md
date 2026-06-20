@@ -120,6 +120,26 @@ SOTA/
 | 06-19 | CFM | Channel Frequency Mixer | DCT frequency transform → learnable frequency mixing matrix → cross-channel frequency information exchange | Classification/Detection/Segmentation |
 | 06-19 | SGM | Spatial Gradient Modulator | Sobel gradient extraction → gradient magnitude-direction joint encoding → direction-aware feature modulation | Classification/Detection/Segmentation/Edge Detection |
 | 06-19 | DEM | Dense Evolution Module | Multi-scale variation generation → information entropy fitness evaluation → Top-k natural selection → evolution fusion | Classification/Detection/Segmentation |
+| 06-19 | PAM | Phase Alignment Module | Gabor phase estimation → adaptive phase shift → phase consistency constraint → residual fusion | Image Fusion/Restoration |
+| 06-19 | FGM | Feature Gating Module | Cooperative gating → local context awareness → bidirectional channel interaction → sparse activation | Classification/Detection/Segmentation |
+| 06-19 | MCM | Multi-Scale Context Module | Multi-scale parallel extraction → adaptive scale weights → scale interaction → global-local fusion | Segmentation/Detection/Classification |
+| 06-19 | DWM | Dynamic Weight Module | Content encoding → modulation factor prediction → progressive modulation → smoothness constraint | Classification/Detection/Style Transfer |
+| 06-19 | ERM | Edge Response Module | Learnable edge detection → edge enhancement → edge-nonedge separation → adaptive fusion | Edge Detection/Segmentation/Detection |
+| 06-19 | STM | Spatial-Channel Transformer Module | Spatial-channel joint encoding → bidirectional cross-attention → position encoding enhancement → multi-head transform | Classification/Detection/Segmentation |
+| 06-19 | LHM | Local Histogram Module | Differentiable soft binning → local distribution statistics → distribution-aware enhancement → residual fusion | Classification/Anomaly Detection/Texture Analysis |
+| 06-19 | CCM | Channel Correlation Module | Channel correlation matrix → low-rank approximation → correlation-guided enhancement → regularization | Classification/Detection/Segmentation |
+| 06-19 | RVM | Random Variation Module | Controlled random injection → temperature control → feature-level enhancement → variance-preserving normalization | Classification/Detection/Robustness |
+| 06-19 | KSM | Kernel Selection Module | Position-aware kernel selection → differentiable soft selection → multi-scale parallel → sparse regularization | Classification/Detection/Segmentation |
+| 06-20 | OSM | Offset Spatial Mixing | Deformable offset learning → offset continuity constraint → multi-scale offset fusion → offset-aware aggregation | Classification/Detection/Segmentation |
+| 06-20 | VGM | Variational Gaussian Mixing | Gaussian distribution modeling → variational inference → uncertainty-aware mixing → sampling augmentation | Classification/Detection/Segmentation |
+| 06-20 | ABM | Adaptive Batch Module | Content-aware statistics → dual modulation → lightweight prediction → progressive normalization | Classification/Style Transfer/Domain Adaptation |
+| 06-20 | BFM | Batch Fusion Module | Batch statistics → inter-sample attention → adaptive fusion → computation efficient | Classification/Metric Learning/Few-Shot Learning |
+| 06-20 | CVM | Channel Variance Module | Channel variance estimation → variance-guided enhancement → variance normalization → residual fusion | Classification/Feature Selection/Channel Pruning |
+| 06-20 | DPM | Dense Prediction Module | Global-local fusion → adaptive weights → dense prediction head → multi-task support | Segmentation/Depth Estimation/Detection |
+| 06-20 | FTM | Frequency Transform Module | Lightweight Haar transform → band selection → frequency enhancement → inverse transform fusion | Classification/Restoration/Denoising |
+| 06-20 | GCM | Gradient Correlation Module | Multi-direction gradients → gradient correlation calculation → correlation-guided enhancement → structure preservation | Edge Detection/Segmentation/Texture Analysis |
+| 06-20 | JRM | Joint Reasoning Module | Multi-relation modeling → relation interaction → joint reasoning → reasoning gate | Scene Understanding/Visual Question Answering/Relation Detection |
+| 06-20 | NAM | Neural Attention Module | Multi-scale attention → scale interaction → attention fusion → neural modulation | Classification/Detection/Segmentation |
 
 ## Usage
 

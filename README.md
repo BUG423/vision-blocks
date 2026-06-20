@@ -114,6 +114,26 @@ SOTA/
 | 06-19 | CFM | Channel Frequency Mixer | DCT频域变换→可学习频率混合矩阵→跨通道频率信息交换 | 分类/检测/分割 |
 | 06-19 | SGM | Spatial Gradient Modulator | Sobel梯度提取→梯度幅值-方向联合编码→方向感知特征调制 | 分类/检测/分割/边缘检测 |
 | 06-19 | DEM | Dense Evolution Module | 多尺度变异生成→信息熵适应度评估→Top-k自然选择→进化融合 | 分类/检测/分割 |
+| 06-19 | PAM | Phase Alignment Module | Gabor相位估计→自适应相位偏移→相位一致性约束→残差融合 | 图像融合/恢复 |
+| 06-19 | FGM | Feature Gating Module | 协作门控→局部上下文感知→双向通道交互→稀疏激活 | 分类/检测/分割 |
+| 06-19 | MCM | Multi-Scale Context Module | 多尺度并行提取→自适应尺度权重→尺度间交互→全局-局部融合 | 分割/检测/分类 |
+| 06-19 | DWM | Dynamic Weight Module | 内容编码→调制因子预测→渐进式调制→平滑性约束 | 分类/检测/风格迁移 |
+| 06-19 | ERM | Edge Response Module | 可学习边缘检测→边缘增强→边缘-非边缘分离→自适应融合 | 边缘检测/分割/检测 |
+| 06-19 | STM | Spatial-Channel Transformer Module | 空间-通道联合编码→双向交叉注意力→位置编码增强→多头变换 | 分类/检测/分割 |
+| 06-19 | LHM | Local Histogram Module | 可微分soft binning→局部分布统计→分布感知增强→残差融合 | 分类/异常检测/纹理分析 |
+| 06-19 | CCM | Channel Correlation Module | 通道相关性矩阵→低秩近似→相关性引导增强→正则化 | 分类/检测/分割 |
+| 06-19 | RVM | Random Variation Module | 可控随机注入→温度控制→特征级增强→方差保持归一化 | 分类/检测/鲁棒性 |
+| 06-19 | KSM | Kernel Selection Module | 位置感知核选择→可微分软选择→多尺度并行→稀疏正则化 | 分类/检测/分割 |
+| 06-20 | OSM | Offset Spatial Mixing | 可变形偏移学习→偏移连续性约束→多尺度偏移融合→偏移感知聚合 | 分类/检测/分割 |
+| 06-20 | VGM | Variational Gaussian Mixing | 高斯分布建模→变分推断→不确定性感知混合→采样增强 | 分类/检测/分割 |
+| 06-20 | ABM | Adaptive Batch Module | 内容感知统计量→双重调制→轻量级预测→渐进式归一化 | 分类/风格迁移/域自适应 |
+| 06-20 | BFM | Batch Fusion Module | 批内统计→样本间注意力→自适应融合→计算高效 | 分类/度量学习/少样本学习 |
+| 06-20 | CVM | Channel Variance Module | 通道方差估计→方差引导增强→方差归一化→残差融合 | 分类/特征选择/通道剪枝 |
+| 06-20 | DPM | Dense Prediction Module | 全局-局部融合→自适应权重→密集预测头→多任务支持 | 分割/深度估计/检测 |
+| 06-20 | FTM | Frequency Transform Module | 轻量级Haar变换→频带选择→频域增强→逆变换融合 | 分类/恢复/去噪 |
+| 06-20 | GCM | Gradient Correlation Module | 多方向梯度→梯度相关性计算→相关性引导增强→结构保持 | 边缘检测/分割/纹理分析 |
+| 06-20 | JRM | Joint Reasoning Module | 多关系建模→关系交互→联合推理→推理门控 | 场景理解/视觉问答/关系检测 |
+| 06-20 | NAM | Neural Attention Module | 多尺度注意力→尺度间交互→注意力融合→神经调制 | 分类/检测/分割 |
 
 ## 使用方法
 
