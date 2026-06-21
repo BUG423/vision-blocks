@@ -147,6 +147,16 @@ SOTA/
 | 06-20 | GCM-BCL | Gradient Correlation Module (BCL) | 多方向梯度→梯度相关性计算→相关性引导增强→结构保持 | 时序分析 |
 | 06-20 | JRM-BCL | Joint Reasoning Module (BCL) | 多关系建模→关系交互→联合推理→推理门控 | 时序分析 |
 | 06-20 | NAM-BCL | Neural Attention Module (BCL) | 多尺度注意力→尺度间交互→注意力融合→神经调制 | 时序分析 |
+| 06-20 | ARM-BCL | Attention Refinement Module (BCL) | 迭代精炼→残差精炼→精炼门控→收敛检测 | 时序分析 |
+| 06-20 | CLM-BCL | Context Learning Module (BCL) | 多类型上下文→上下文选择→上下文交互→学习型融合 | 时序分析 |
+| 06-20 | DFM-BCL | Dynamic Feature Module (BCL) | 内容编码→参数预测→动态处理→输出精炼 | 时序分析 |
+| 06-20 | ESM-BCL | Enhanced Spatial Module (BCL) | 时间位置编码→内容自适应采样→多尺度时间建模→时间一致性 | 时序分析 |
+| 06-20 | FCM-BCL | Feature Correlation Module (BCL) | 低秩相关性→相关性模式学习→相关性引导增强→输出精炼 | 时序分析 |
+| 06-20 | GFM-BCL | Global Fusion Module (BCL) | 全局语义提取→局部细节增强→自适应融合→语义引导增强 | 时序分析 |
+| 06-20 | HPM-BCL | Hierarchical Prediction Module (BCL) | 层次化预测→层次间传递→渐进式精炼→多层次融合 | 时序分析 |
+| 06-20 | IPM-BCL | Iterative Processing Module (BCL) | 迭代处理→残差累积→迭代门控→自适应迭代次数 | 时序分析 |
+| 06-20 | JSM-BCL | Joint Selection Module (BCL) | 时间选择→通道选择→选择一致性→联合稀疏激活 | 时序分析 |
+| 06-20 | KBM-BCL | Knowledge Bridge Module (BCL) | 知识编码→语义对齐→桥接传递→自适应桥接强度 | 时序分析 |
 
 ## 使用方法
 

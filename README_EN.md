@@ -153,6 +153,16 @@ SOTA/
 | 06-20 | GCM-BCL | Gradient Correlation Module (BCL) | Multi-direction gradients → gradient correlation calculation → correlation-guided enhancement → structure preservation | Time-Series Analysis |
 | 06-20 | JRM-BCL | Joint Reasoning Module (BCL) | Multi-relation modeling → relation interaction → joint reasoning → reasoning gate | Time-Series Analysis |
 | 06-20 | NAM-BCL | Neural Attention Module (BCL) | Multi-scale attention → scale interaction → attention fusion → neural modulation | Time-Series Analysis |
+| 06-20 | ARM-BCL | Attention Refinement Module (BCL) | Iterative refinement → residual refinement → refinement gate → convergence detection | Time-Series Analysis |
+| 06-20 | CLM-BCL | Context Learning Module (BCL) | Multi-type context → context selection → context interaction → learnable fusion | Time-Series Analysis |
+| 06-20 | DFM-BCL | Dynamic Feature Module (BCL) | Content encoding → parameter prediction → dynamic processing → output refinement | Time-Series Analysis |
+| 06-20 | ESM-BCL | Enhanced Spatial Module (BCL) | Temporal position encoding → content-adaptive sampling → multi-scale temporal modeling → temporal consistency | Time-Series Analysis |
+| 06-20 | FCM-BCL | Feature Correlation Module (BCL) | Low-rank correlation → correlation pattern learning → correlation-guided enhancement → output refinement | Time-Series Analysis |
+| 06-20 | GFM-BCL | Global Fusion Module (BCL) | Global semantic extraction → local detail enhancement → adaptive fusion → semantic-guided enhancement | Time-Series Analysis |
+| 06-20 | HPM-BCL | Hierarchical Prediction Module (BCL) | Hierarchical prediction → inter-level passing → progressive refinement → multi-level fusion | Time-Series Analysis |
+| 06-20 | IPM-BCL | Iterative Processing Module (BCL) | Iterative processing → residual accumulation → iteration gate → adaptive iteration count | Time-Series Analysis |
+| 06-20 | JSM-BCL | Joint Selection Module (BCL) | Temporal selection → channel selection → selection consistency → joint sparse activation | Time-Series Analysis |
+| 06-20 | KBM-BCL | Knowledge Bridge Module (BCL) | Knowledge encoding → semantic alignment → bridge passing → adaptive bridge strength | Time-Series Analysis |
 
 ## Usage
 
