@@ -140,6 +140,16 @@ SOTA/
 | 06-20 | GCM | Gradient Correlation Module | Multi-direction gradients → gradient correlation calculation → correlation-guided enhancement → structure preservation | Edge Detection/Segmentation/Texture Analysis |
 | 06-20 | JRM | Joint Reasoning Module | Multi-relation modeling → relation interaction → joint reasoning → reasoning gate | Scene Understanding/Visual Question Answering/Relation Detection |
 | 06-20 | NAM | Neural Attention Module | Multi-scale attention → scale interaction → attention fusion → neural modulation | Classification/Detection/Segmentation |
+| 06-20 | ARM | Attention Refinement Module | Iterative refinement → residual refinement → refinement gate → convergence detection | Classification/Detection/Segmentation |
+| 06-20 | CLM | Context Learning Module | Multi-type context → context selection → context interaction → learnable fusion | Segmentation/Scene Understanding/Classification |
+| 06-20 | DFM | Dynamic Feature Module | Content encoding → parameter prediction → dynamic processing → output refinement | Classification/Style Transfer/Domain Adaptation |
+| 06-20 | ESM | Enhanced Spatial Module | Spatial position encoding → content-adaptive sampling → multi-scale spatial modeling → spatial consistency | Detection/Segmentation/Pose Estimation |
+| 06-20 | FCM | Feature Correlation Module | Low-rank correlation → correlation pattern learning → correlation-guided enhancement → output refinement | Classification/Detection/Segmentation |
+| 06-20 | GFM | Global Fusion Module | Global semantic extraction → local detail enhancement → adaptive fusion → semantic-guided enhancement | Classification/Segmentation/Scene Understanding |
+| 06-20 | HPM | Hierarchical Prediction Module | Hierarchical prediction → inter-level passing → progressive refinement → multi-level fusion | Segmentation/Detection/Depth Estimation |
+| 06-20 | IPM | Iterative Processing Module | Iterative processing → residual accumulation → iteration gate → adaptive iteration count | Restoration/Denoising/Super-Resolution |
+| 06-20 | JSM | Joint Selection Module | Spatial selection → channel selection → selection consistency → joint sparse activation | Classification/Detection/Segmentation |
+| 06-20 | KBM | Knowledge Bridge Module | Knowledge encoding → semantic alignment → bridge passing → adaptive bridge strength | Multi-scale Fusion/Cross-layer Passing |
 
 ## Usage
 

@@ -134,6 +134,16 @@ SOTA/
 | 06-20 | GCM | Gradient Correlation Module | 多方向梯度→梯度相关性计算→相关性引导增强→结构保持 | 边缘检测/分割/纹理分析 |
 | 06-20 | JRM | Joint Reasoning Module | 多关系建模→关系交互→联合推理→推理门控 | 场景理解/视觉问答/关系检测 |
 | 06-20 | NAM | Neural Attention Module | 多尺度注意力→尺度间交互→注意力融合→神经调制 | 分类/检测/分割 |
+| 06-20 | ARM | Attention Refinement Module | 迭代精炼→残差精炼→精炼门控→收敛检测 | 分类/检测/分割 |
+| 06-20 | CLM | Context Learning Module | 多类型上下文→上下文选择→上下文交互→学习型融合 | 分割/场景理解/分类 |
+| 06-20 | DFM | Dynamic Feature Module | 内容编码→参数预测→动态处理→输出精炼 | 分类/风格迁移/域自适应 |
+| 06-20 | ESM | Enhanced Spatial Module | 空间位置编码→内容自适应采样→多尺度空间建模→空间一致性 | 检测/分割/姿态估计 |
+| 06-20 | FCM | Feature Correlation Module | 低秩相关性→相关性模式学习→相关性引导增强→输出精炼 | 分类/检测/分割 |
+| 06-20 | GFM | Global Fusion Module | 全局语义提取→局部细节增强→自适应融合→语义引导增强 | 分类/分割/场景理解 |
+| 06-20 | HPM | Hierarchical Prediction Module | 层次化预测→层次间传递→渐进式精炼→多层次融合 | 分割/检测/深度估计 |
+| 06-20 | IPM | Iterative Processing Module | 迭代处理→残差累积→迭代门控→自适应迭代次数 | 恢复/去噪/超分辨率 |
+| 06-20 | JSM | Joint Selection Module | 空间选择→通道选择→选择一致性→联合稀疏激活 | 分类/检测/分割 |
+| 06-20 | KBM | Knowledge Bridge Module | 知识编码→语义对齐→桥接传递→自适应桥接强度 | 多尺度融合/跨层传递 |
 
 ## 使用方法
 
