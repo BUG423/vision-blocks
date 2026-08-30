@@ -3,16 +3,14 @@
 [![English](https://img.shields.io/badge/README-English-blue)](README_EN.md)
 [![中文](https://img.shields.io/badge/README-中文-red)](README.md)
 
-A systematically organized open-source repository of commonly used neural network modules, with a focus on computer vision tasks.
+A structured collection of neural-network building blocks for computer-vision and time-series tasks.
 
-> **Note**: This repository also has a `bcl` branch that provides modules adapted for time-series BCL format data. Switch branches to get processing code for different input formats:
-> ```bash
-> git checkout bcl  # Switch to BCL time-series format branch
-> ```
+> [!IMPORTANT]
+> Two-dimensional vision blocks and BCL time-series adapters are both maintained on `main`. Use `blocks/` for vision modules and `adapters/bcl/` for temporal modules; no branch switching is required.
 
 ## Overview
 
-This project collects and implements popular plug-and-play neural network modules for computer vision, covering image classification, object detection, semantic segmentation, and more. Each module includes clear documentation on its paper background, architectural design, PyTorch implementation, and test code. **All modules are originally designed.**
+This project organizes composable PyTorch modules for image classification, object detection, semantic segmentation, and temporal analysis. Each implementation should document its tensor contract, intended tasks, parameter constraints, and a minimal executable example. Experimental designs in this repository are not automatically peer-reviewed or state of the art; validate them independently on the target task.
 
 ## Directory Structure
 
@@ -21,6 +19,8 @@ SOTA/
 ├── README.md
 ├── README_EN.md
 ├── resnet_insert_example.py
+├── adapters/
+│   └── bcl/    # BCL temporal-input and 1D module adapters
 └── blocks/
     ├── SRM/  Selective Response Module
     ├── DFA/  Differential Feature Amplifier
