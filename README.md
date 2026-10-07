@@ -438,49 +438,73 @@ mindmap
 ### 安装
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/BUG423/vision-blocks.git
 cd vision-blocks
 pip install torch   # Python >= 3.9, PyTorch >= 2.0
 ```
 
-### 即插即用：插入 ResNet 残差块
+### 1. 原创模块：即插即用
 
 ```python
 import torch
 from blocks.SRM.srm import SRM
-from blocks.DFA.dfa import DFA
 
-# 统一接口：channels 首参，[B, C, H, W] -> [B, C, H, W]
-srm = SRM(channels=64)
-x = torch.randn(1, 64, 32, 32)
-print(srm(x).shape)   # torch.Size([1, 64, 32, 32])
+srm = SRM(channels=64)                       # 统一契约：首参 channels
+x = torch.randn(1, 64, 32, 32)               # [B, C, H, W]
+print(srm(x).shape)                          # torch.Size([1, 64, 32, 32])
 ```
 
-### 完整示例：ResNet-50 + 模块
+### 2. 论文提取模块：同一契约
+
+```python
+from blocks.BQA.bqa import BQA      # CVPR 2026 · BinaryAttention（注意力）
+from blocks.FPG.fpg import FPG      # CVPR 2026 · PFGNet（频域门控）
+from blocks.WMF.wmf import WMF      # NeurIPS 2026 · WaveMamba（跨模态融合）
+
+x = torch.randn(2, 64, 32, 32)
+print(BQA(channels=64)(x).shape)    # [2, 64, 32, 32]
+print(FPG(channels=64)(x).shape)    # [2, 64, 32, 32]
+print(WMF(channels=64)(x).shape)    # [2, 64, 32, 32]
+```
+
+### 3. 接口例外模块（损失 / 后处理 / 训练期增强）
+
+少数模块按其论文语义不保持 `[B,C,H,W]→[B,C,H,W]`，已在表中和文件头标明：
+
+```python
+import torch
+from blocks.ELN.eln import ELN      # 损失：logits + 权重 + label → 标量
+from blocks.RKG.rkg import RKG      # 后处理：概率图 [B,K,H,W] → 标签 [B,H,W]
+from blocks.AUG.aug import AUG      # 训练期增强：train() 有扰动，eval() 恒等
+
+# ELN —— 训练损失
+crit = ELN()
+loss = crit(torch.randn(8, 10), torch.randn(10, 16), torch.randint(0, 10, (8,)))
+print(loss.shape)                   # torch.Size([])
+
+# RKG —— 分割评测后处理
+rkg = RKG(metric='dice')
+labels = rkg(torch.rand(2, 5, 32, 32).softmax(1))
+print(labels.shape)                 # torch.Size([2, 32, 32])
+
+# AUG —— 数据增强（eval 恒等）
+aug = AUG(image_size=64)
+aug.eval()
+x = torch.randn(1, 3, 64, 64)
+print(torch.equal(aug(x), x))       # True
+```
+
+### 4. 完整骨干插入示例
 
 ```python
 # 见 resnet_insert_example.py —— 在 Bottleneck 的 conv3 之后、残差相加之前插入
 from resnet_insert_example import ResNet50
 
 model = ResNet50(num_classes=1000, attention_type='srm')   # 或 dfa / cim / gff / ...
-out = model(torch.randn(1, 3, 224, 224))
-print(out.shape)   # torch.Size([1, 1000])
+print(model(torch.randn(1, 3, 224, 224)).shape)             # [1, 1000]
 ```
 
-### 论文提取模块
-
-```python
-from blocks.BQA.bqa import BQA      # CVPR 2026 · BinaryAttention
-from blocks.SLA.sla import SLA      # CVPR 2026 Findings · SAT
-from blocks.WMF.wmf import WMF      # NeurIPS 2026 · WaveMamba
-
-x = torch.randn(2, 64, 16, 16)
-print(BQA(channels=64)(x).shape)
-print(SLA(channels=64)(x).shape)
-print(WMF(channels=64)(x).shape)
-```
-
-### BCL 时序适配器
+### 5. BCL 时序适配器
 
 ```python
 # 见 adapters/bcl/ —— 输入布局 [batch, channels, time]
@@ -491,7 +515,7 @@ print(WMF(channels=64)(x).shape)
 
 ## 🔌 统一接口契约
 
-所有模块遵循同一契约（详见 `.mimocode/EXTRACT_SPEC.md`）：
+所有模块遵循同一契约（完整规范见 [EXTRACT_SPEC.md](EXTRACT_SPEC.md)）：
 
 ```python
 class ABBREV(nn.Module):
@@ -513,7 +537,14 @@ class ABBREV(nn.Module):
 4. **禁止改变数值逻辑**：重构只允许改命名、删死代码、统一 `nn` 用法、硬编码参数化、补 shape assert。
 5. 仅依赖 `torch` / `torch.nn` / `torch.nn.functional` / `typing` / `math`。
 
-**例外**：`ELN` 是损失函数，输出标量 loss 而非特征图（已在文件头注明）。
+**接口例外一览**（均为论文原生语义，文件头已注明）
+
+| 模块 | 语义 | 接口 |
+|------|------|------|
+| `ELN` | 训练损失 | `(logits[N,C], fc_weight[C,D], target[N]) → 标量` |
+| `RKG` | 评测后处理 | `(probs[B,K,H,W]) → labels[B,H,W]` |
+| `AUG` | 训练期增强 | `[B,C,H,W]→[B,C,H,W]`，但 `eval()` 恒等 |
+| `WMF` / `CFA` | 双分支融合 | `forward(x, x_aux=None)`，单输入可跑 |
 
 ---
 
@@ -532,7 +563,7 @@ class ABBREV(nn.Module):
 1. 在文件头保留完整来源信息（论文标题 / venue / 链接 / GitHub / 许可证 / 模块出处 / 重构说明）。
 2. 只做**等价重写**：删第三方依赖、统一 4D 接口、参数化硬编码；数值逻辑逐行保持。
 3. 原始许可证写入头注释；对外文档注明「请引用原论文」。
-4. 详细规范见 [`.mimocode/EXTRACT_SPEC.md`](.mimocode/EXTRACT_SPEC.md)。
+4. 详细规范见 [EXTRACT_SPEC.md](EXTRACT_SPEC.md)。
 
 ---
 
@@ -540,38 +571,46 @@ class ABBREV(nn.Module):
 
 ### 许可证
 
-本仓库整体采用 **MIT License**。
+本仓库原创内容采用 **MIT License**（见 [LICENSE](LICENSE)）。
 
-⚠️ **论文提取模块**保留其**原始许可证**（MIT / Apache-2.0，见上表「许可证」列）。
-使用这些模块时请同时遵守对应上游仓库的许可证条款。
+**论文提取模块保留其原始许可证**，与上表「许可证」列一一对应：
+
+| 许可证 | 模块数 | 说明 |
+|--------|:------:|------|
+| MIT | 24 | 可自由使用，保留版权声明 |
+| Apache-2.0 | 12 | 可自由使用，保留版权声明与 NOTICE |
+| BSD-3-Clause | 1 | `RKG`（RankSEG），可自由使用，保留版权声明 |
+
+使用这些模块时，请同时遵守对应上游许可证条款；每个文件头部的 `# 原始许可证` 为该模块的权威声明。
 
 ### 引用
 
-- **原创模块**（SRM、DFA、CIM 等 77 个）：尚未发表，如在论文中使用，请注明来源于本仓库并描述所用模块。
-- **论文提取模块**（BQA、SLA、FPG 等 37 个）：**必须引用原论文**（标题与链接见上表），代码版权归原作者所有。
+**两类模块、两种引用方式**，请勿混用：
+
+| 你使用的模块 | 需要引用 |
+|--------------|----------|
+| **原创模块**（SRM、DFA、CIM 等 77 个） | 本仓库（下方 BibTeX） |
+| **论文提取模块**（BQA、FPG、RKG 等 37 个） | **原论文** + 本仓库 |
+
+**论文提取模块**的论文标题、venue、链接见上表「A. 顶会论文提取模块」；各文件头注释也带有同源信息。示例（以 `BQA` 为例，请按所用模块替换）：
+
+```bibtex
+@inproceedings{xiao2026binaryattention,
+  title     = {BinaryAttention: One-Bit QK-Attention for Vision and Diffusion Transformers},
+  author    = {Xiao, Chaodong and Zhang, Zhengqiang and Zhang, Lei},
+  booktitle = {CVPR},
+  year      = {2026}
+}
+```
+
+引用本仓库：
 
 ```bibtex
 @misc{vision-blocks,
   title        = {vision-blocks: Plug-and-Play PyTorch Blocks for Vision and Time-Series},
+  author       = {BUG423 and vision-blocks contributors},
   note         = {Experimental module zoo; validate on your own task},
-  howpublished = {\url{<repo-url>}},
+  howpublished = {\url{https://github.com/BUG423/vision-blocks}},
   year         = {2026}
 }
 ```
-
----
-
-<div align="center">
-
-**⚠️ 免责声明**
-
-本仓库是实验性研究代码，模块效果因任务而异。
-不保证在任意数据集 / 任务上达到 SOTA，也**不构成**已通过同行评审的结论。
-使用前请在目标任务上独立验证，并保留原始论文引用。
-
-<br/>
-
-[![中文](https://img.shields.io/badge/README-中文-f5a623)](README.md)
-[![English](https://img.shields.io/badge/README-English-2f80ed)](README_EN.md)
-
-</div>

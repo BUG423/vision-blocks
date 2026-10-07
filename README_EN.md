@@ -442,60 +442,85 @@ mindmap
 ### Install
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/BUG423/vision-blocks.git
 cd vision-blocks
 pip install torch   # Python >= 3.9, PyTorch >= 2.0
 ```
 
-### Plug into a ResNet bottleneck
+### 1. Original blocks: plug and play
 
 ```python
 import torch
 from blocks.SRM.srm import SRM
-from blocks.DFA.dfa import DFA
 
-# Unified contract: channels first, [B, C, H, W] -> [B, C, H, W]
-srm = SRM(channels=64)
-x = torch.randn(1, 64, 32, 32)
-print(srm(x).shape)   # torch.Size([1, 64, 32, 32])
+srm = SRM(channels=64)                       # unified contract: `channels` first
+x = torch.randn(1, 64, 32, 32)               # [B, C, H, W]
+print(srm(x).shape)                          # torch.Size([1, 64, 32, 32])
 ```
 
-### Full example: ResNet-50 + block
+### 2. Paper-sourced blocks: same contract
+
+```python
+from blocks.BQA.bqa import BQA      # CVPR 2026 · BinaryAttention (attention)
+from blocks.FPG.fpg import FPG      # CVPR 2026 · PFGNet (frequency gating)
+from blocks.WMF.wmf import WMF      # NeurIPS 2026 · WaveMamba (cross-modal fusion)
+
+x = torch.randn(2, 64, 32, 32)
+print(BQA(channels=64)(x).shape)    # [2, 64, 32, 32]
+print(FPG(channels=64)(x).shape)    # [2, 64, 32, 32]
+print(WMF(channels=64)(x).shape)    # [2, 64, 32, 32]
+```
+
+### 3. Interface-exception modules (loss / postprocess / train-time)
+
+A few blocks keep their paper's native semantics instead of
+`[B,C,H,W]→[B,C,H,W]`. They are flagged in the table and file headers:
+
+```python
+import torch
+from blocks.ELN.eln import ELN      # loss: logits + weights + label → scalar
+from blocks.RKG.rkg import RKG      # postprocess: probs [B,K,H,W] → labels [B,H,W]
+from blocks.AUG.aug import AUG      # train-time aug: perturbs in train(), identity in eval()
+
+# ELN — training loss
+crit = ELN()
+loss = crit(torch.randn(8, 10), torch.randn(10, 16), torch.randint(0, 10, (8,)))
+print(loss.shape)                   # torch.Size([])
+
+# RKG — segmentation evaluation postprocess
+rkg = RKG(metric='dice')
+labels = rkg(torch.rand(2, 5, 32, 32).softmax(1))
+print(labels.shape)                 # torch.Size([2, 32, 32])
+
+# AUG — data augmentation (identity at eval)
+aug = AUG(image_size=64)
+aug.eval()
+x = torch.randn(1, 3, 64, 64)
+print(torch.equal(aug(x), x))       # True
+```
+
+### 4. Full backbone insertion example
 
 ```python
 # See resnet_insert_example.py — insert after conv3, before residual add
 from resnet_insert_example import ResNet50
 
 model = ResNet50(num_classes=1000, attention_type='srm')   # or dfa / cim / gff / ...
-out = model(torch.randn(1, 3, 224, 224))
-print(out.shape)   # torch.Size([1, 1000])
+print(model(torch.randn(1, 3, 224, 224)).shape)             # [1, 1000]
 ```
 
-### Paper-sourced blocks
+### 5. BCL time-series adapters
 
 ```python
-from blocks.BQA.bqa import BQA      # CVPR 2026 · BinaryAttention
-from blocks.SLA.sla import SLA      # CVPR 2026 Findings · SAT
-from blocks.WMF.wmf import WMF      # NeurIPS 2026 · WaveMamba
-
-x = torch.randn(2, 64, 16, 16)
-print(BQA(channels=64)(x).shape)
-print(SLA(channels=64)(x).shape)
-print(WMF(channels=64)(x).shape)
-```
-
-### BCL time-series adapters
-
-```python
-# See adapters/bcl/ — expected input layout [batch, channels, time]
-# Each *_bcl.py file ships a minimal executable example.
+# See adapters/bcl/ — input layout [batch, channels, time]
+# Each *_bcl.py file ships with a minimal runnable example
 ```
 
 ---
 
 ## 🔌 Unified Interface Contract
 
-All blocks follow the same contract (see `.mimocode/EXTRACT_SPEC.md`):
+All blocks follow the same contract (full spec: [EXTRACT_SPEC.md](EXTRACT_SPEC.md)):
 
 ```python
 class ABBREV(nn.Module):
@@ -505,38 +530,45 @@ class ABBREV(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         x:   [B, C, H, W]
-        out: [B, C, H, W]   # shape-preserving; exceptions must be documented
+        out: [B, C, H, W]   # shape-preserving; exceptions documented in docstring
         """
 ```
 
-**Rules**
+**Key rules**
 
-1. The first constructor argument **must be `channels: int`** (use `in_channels, out_channels` when they differ, and document it).
+1. The first constructor argument **must be `channels: int`** (use `in_channels, out_channels` when they differ, and say so).
 2. `forward` consumes 4D `[B,C,H,W]` by default; natively 1D/3D/token modules reshape inside the class.
-3. Default hyperparameters match the paper; add only necessary extras with paper defaults.
-4. **Never change numerical logic**: renames, dead-code removal, `nn` cleanup, parameterizing hardcodes, shape asserts only.
-5. Dependencies limited to `torch` / `torch.nn` / `torch.nn.functional` / `typing` / `math`.
+3. Default hyperparameters match the paper; extra kwargs only when necessary, with paper defaults.
+4. **Never change numerical logic**: renaming, dead-code removal, `nn` cleanup, parameterizing hardcodes, and shape asserts are allowed.
+5. Depend only on `torch` / `torch.nn` / `torch.nn.functional` / `typing` / `math`.
 
-**Exception**: `ELN` is a loss function and outputs a scalar loss, not a feature map (noted in its header).
+**Interface exceptions** (paper-native semantics; noted in file headers)
+
+| Block | Semantics | Signature |
+|-------|-----------|-----------|
+| `ELN` | training loss | `(logits[N,C], fc_weight[C,D], target[N]) → scalar` |
+| `RKG` | eval postprocess | `(probs[B,K,H,W]) → labels[B,H,W]` |
+| `AUG` | train-time aug | `[B,C,H,W]→[B,C,H,W]`, identity in `eval()` |
+| `WMF` / `CFA` | dual-branch fusion | `forward(x, x_aux=None)`, single input works |
 
 ---
 
 ## 🧭 How to Add a Module
 
-### Adding an original module
+### New original block
 
-1. Create `blocks/<ABBREV>/<abbrev>.py`; `<ABBREV>` is 2–5 uppercase letters, unique vs existing dirs.
-2. Class name equals the abbreviation: `class ABBREV(nn.Module)`.
-3. Header notes `# 论文：原创模块，尚未发表` + proposer + date.
-4. Docstring uses the four-part format: **intro / structure / paper-writing notes / tasks**.
-5. File ends with `count_parameters` self-check and an `if __name__ == '__main__'` minimal example.
+1. Create `blocks/<ABBREV>/<abbrev>.py`; `<ABBREV>` is 2–5 uppercase letters, no clash with existing dirs.
+2. Class name matches the abbrev: `class ABBREV(nn.Module)`.
+3. Header states `# 论文：原创模块，尚未发表` + proposer + date.
+4. Docstring uses the four-section format: **intro / structure / paper wording / tasks**.
+5. File ends with `count_parameters` and a `if __name__ == '__main__'` smoke example.
 
-### Extracting a paper module
+### Extracted paper block
 
-1. Keep full provenance in the header (paper title / venue / link / GitHub / license / module origin / rewrite notes).
-2. **Equivalence rewrite only**: drop third-party deps, unify the 4D interface, parameterize hardcodes; preserve numerical logic line-by-line.
-3. Record the original license in the header; downstream docs must say "cite the original paper".
-4. Full spec: [`.mimocode/EXTRACT_SPEC.md`](.mimocode/EXTRACT_SPEC.md).
+1. Keep full provenance in the header (paper title / venue / link / GitHub / license / source path / refactor notes).
+2. **Equivalence rewrite only**: drop third-party deps, unify the 4D interface, parameterize hardcodes; keep numerical logic line-by-line.
+3. Put the original license in the header; document "cite the original paper" externally.
+4. Full spec: [EXTRACT_SPEC.md](EXTRACT_SPEC.md).
 
 ---
 
@@ -544,39 +576,48 @@ class ABBREV(nn.Module):
 
 ### License
 
-This repository as a whole is released under the **MIT License**.
+Original content of this repository is **MIT License** (see [LICENSE](LICENSE)).
 
-⚠️ **Paper-sourced blocks** retain their **original licenses** (MIT / Apache-2.0; see the License column above).
-When using those blocks you must also honor the upstream license terms.
+**Paper-sourced blocks retain their original licenses**, matching the License column above:
+
+| License | Blocks | Notes |
+|---------|:------:|-------|
+| MIT | 24 | free use, keep copyright notice |
+| Apache-2.0 | 12 | free use, keep copyright + NOTICE |
+| BSD-3-Clause | 1 | `RKG` (RankSEG), free use, keep copyright notice |
+
+When using these blocks, also honor the upstream license terms. The `# 原始许可证` line in each file header is the authoritative statement for that block.
 
 ### Citation
 
-- **Original modules** (SRM, DFA, CIM and the other 77): unpublished. If you use them in a paper, please note this repository and describe the modules used.
-- **Paper-sourced modules** (BQA, SLA, FPG and the other 37): you **must cite the original papers** (titles and links in the table above); code copyright remains with the original authors.
+**Two kinds of blocks, two ways to cite** — do not mix them up:
+
+| Blocks you use | What to cite |
+|----------------|--------------|
+| **Original** (SRM, DFA, CIM and the other 77) | this repository (BibTeX below) |
+| **Paper-sourced** (BQA, FPG, RKG and the other 37) | **the original paper** + this repository |
+
+Paper titles, venues, and links for paper-sourced blocks are in the
+"A. Paper-sourced modules" table above; each file header carries the same
+provenance. Example (shown for `BQA`; substitute the block you use):
+
+```bibtex
+@inproceedings{xiao2026binaryattention,
+  title     = {BinaryAttention: One-Bit QK-Attention for Vision and Diffusion Transformers},
+  author    = {Xiao, Chaodong and Zhang, Zhengqiang and Zhang, Lei},
+  booktitle = {CVPR},
+  year      = {2026}
+}
+```
+
+Cite this repository:
 
 ```bibtex
 @misc{vision-blocks,
   title        = {vision-blocks: Plug-and-Play PyTorch Blocks for Vision and Time-Series},
+  author       = {BUG423 and vision-blocks contributors},
   note         = {Experimental module zoo; validate on your own task},
-  howpublished = {\url{<repo-url>}},
+  howpublished = {\url{https://github.com/BUG423/vision-blocks}},
   year         = {2026}
 }
 ```
-
----
-
-<div align="center">
-
-**⚠️ Disclaimer**
-
-This repository is experimental research code; results vary by task.
-It does not guarantee SOTA on any dataset / task and does **not** constitute
-peer-reviewed conclusions. Validate independently on your target task and
-keep the original paper citations.
-
-<br/>
-
-[![中文](https://img.shields.io/badge/README-中文-f5a623)](README.md)
-[![English](https://img.shields.io/badge/README-English-2f80ed)](README_EN.md)
-
-</div>
