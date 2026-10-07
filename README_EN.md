@@ -1,180 +1,582 @@
-# SOTA - State-of-the-Art Neural Network Modules
+<div align="center">
 
-[![English](https://img.shields.io/badge/README-English-blue)](README_EN.md)
-[![中文](https://img.shields.io/badge/README-中文-red)](README.md)
+# 🔷 vision-blocks
 
-A structured collection of neural-network building blocks for computer-vision and time-series tasks.
+**Plug-and-Play PyTorch Blocks for Vision & Time-Series — an Experimental Module Zoo**
 
-> [!IMPORTANT]
-> Two-dimensional vision blocks and BCL time-series adapters are both maintained on `main`. Use `blocks/` for vision modules and `adapters/bcl/` for temporal modules; no branch switching is required.
+[![中文](https://img.shields.io/badge/README-中文-f5a623)](README.md)
+[![English](https://img.shields.io/badge/README-English-2f80ed)](README_EN.md)
+<br/>
+[![Python](https://img.shields.io/badge/Python-3.9%2B-3776ab?logo=python&logoColor=white)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c?logo=pytorch&logoColor=white)](https://pytorch.org/)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Modules](https://img.shields.io/badge/modules-114-informational)](#-module-at-a-glance)
+[![Paper](https://img.shields.io/badge/paper--sourced-37-blueviolet)](#a-paper-sourced-modules)
+[![Original](https://img.shields.io/badge/original-77-orange)](#b-original-modules)
+<br/>
+[![CVPR 2026](https://img.shields.io/badge/CVPR%202026-12-blue)](#-stats-strip)
+[![ECCV 2026](https://img.shields.io/badge/ECCV%202026-9-blue)](#-stats-strip)
+[![ICCV 2025](https://img.shields.io/badge/ICCV%202025-7-blue)](#-stats-strip)
+[![NeurIPS 2026](https://img.shields.io/badge/NeurIPS%202026-3-blue)]<br/>
+[![NeurIPS 2025](https://img.shields.io/badge/NeurIPS%202025-6-blue)](#-stats-strip)
 
-## Overview
+A curated open-source collection of neural-network building blocks for computer vision and time-series tasks.
 
-This project organizes composable PyTorch modules for image classification, object detection, semantic segmentation, and temporal analysis. Each implementation should document its tensor contract, intended tasks, parameter constraints, and a minimal executable example. Experimental designs in this repository are not automatically peer-reviewed or state of the art; validate them independently on the target task.
+> ⚠️ **Honest disclaimer**: this repository is **experimental research code** (an experimental
+> module zoo). It does **NOT** claim state-of-the-art results or peer review. Original modules
+> are unpublished; paper-sourced modules are equivalence-preserving rewrites. Validate
+> everything on your own target task before use.
 
-## Directory Structure
+</div>
 
+---
+
+## 📑 Table of Contents
+
+- [✨ Highlights](#-highlights)
+- [🏗️ Architecture](#️-architecture)
+- [🧠 Module Categories](#-module-categories)
+- [📊 Stats Strip](#-stats-strip)
+- [📚 Module Catalog](#-module-catalog)
+- [🚀 Quick Start](#-quick-start)
+- [🔌 Unified Interface Contract](#-unified-interface-contract)
+- [🧭 How to Add a Module](#-how-to-add-a-module)
+- [📄 License & Citation](#-license--citation)
+
+---
+
+## ✨ Highlights
+
+| | |
+|:---:|:---|
+| 🧩 **Plug-and-play** | Every block is a self-contained `nn.Module`; drop it into any CNN / Transformer backbone |
+| 📐 **Unified tensor contract** | Default `[B, C, H, W] → [B, C, H, W]`, shape-preserving; first ctor arg is `channels` |
+| 🧪 **Two module sources** | Original experimental blocks (proposed by BUG423) + equivalence-extracted top-venue paper blocks |
+| 🌊 **Time-series adapters** | `adapters/bcl/` turns 1D modules into BCL time-series pipelines |
+| 📝 **Full docstrings** | Four-part Chinese docs per module: intro / structure / paper-writing notes / tasks |
+| ⚡ **Zero third-party deps** | Pure `torch` + `typing` + `math` — no einops / timm / mamba |
+
+---
+
+## 🏗️ Architecture
+
+### Repository layout & module flow
+
+```mermaid
+flowchart TB
+    subgraph SRC["Module sources"]
+        direction LR
+        A["🧪 Original blocks<br/>77 · proposer BUG423"]
+        B["📄 Paper-extracted<br/>36 · CVPR / ECCV / ICCV / NeurIPS"]
+    end
+
+    subgraph REPO["vision-blocks repository"]
+        direction TB
+        BLK["blocks/ABBREV/abbrev.py<br/>plug-and-play vision blocks"]
+        BCL["adapters/bcl/<br/>BCL time-series adapters"]
+    end
+
+    subgraph USE["Downstream usage"]
+        direction TB
+        CV["CV backbones<br/>ResNet / ViT / ..."]
+        TS["Time-series pipelines<br/>sensors / finance / IoT"]
+    end
+
+    A --> BLK
+    B --> BLK
+    A --> BCL
+    BLK --> CV
+    BCL --> TS
+
+    style SRC fill:#eef2ff,stroke:#6366f1,color:#1e1b4b
+    style REPO fill:#f0fdf4,stroke:#22c55e,color:#14532d
+    style USE fill:#fff7ed,stroke:#f97316,color:#7c2d12
 ```
-SOTA/
-├── README.md
-├── README_EN.md
-├── resnet_insert_example.py
-├── adapters/
-│   └── bcl/    # BCL temporal-input and 1D module adapters
-└── blocks/
-    ├── SRM/  Selective Response Module
-    ├── DFA/  Differential Feature Amplifier
-    ├── CIM/  Contextual Information Modulator
-    ├── GFF/  Gated Feature Fusion
-    ├── DRS/  Dynamic Receptive Field Selector
-    ├── AFM/  Adaptive Frequency Modulation
-    ├── PFA/  Progressive Feature Aggregator
-    ├── SAM/  Spatial Affinity Module
-    ├── CRM/  Channel Recalibration Module
-    ├── LCR/  Local Context Reconstructor
-    ├── RIM/  Recursive Inference Module
-    ├── PDR/  Polarized Dual Representation
-    ├── SSM/  Saliency-Guided Suppression Module
-    ├── PGM/  Progressive Gating Module
-    ├── FEM/  Feature Equilibrium Module
-    ├── IGM/  Information Gathering Module
-    ├── RGM/  Reciprocal Guidance Module
-    ├── DSM/  Dual-Scale Modulator
-    ├── OEM/  Order-Statistic Enhancement Module
-    ├── MPM/  Momentum Propagation Module
-    ├── PCM/  Phase-Coherence Module
-    ├── CGM/  Conditional Gating Module
-    ├── IRM/  Information Routing Module
-    ├── BSM/  Bilateral Similarity Module
-    ├── DGM/  Diversity-Guided Module
-    ├── SUM/  Spatial Uncertainty Module
-    ├── AGM/  Adaptive Granularity Module
-    ├── RAM/  Residual Amplification Module
-    ├── TCM/  Tensor Completion Module
-    ├── NLM/  Non-local Modulation Module
-    ├── EDM/  Entropy-Driven Module
-    ├── FIM/  Frequency Importance Module
-    ├── HTM/  Hierarchical Transformation Module
-    ├── WAM/  Weighted Attention Module
-    ├── RCM/  Recursive Convolution Module
-    ├── CAM/  Contrast-Aware Module
-    ├── SDM/  Spectral Decomposition Module
-    ├── QEM/  Quantile Enhancement Module
-    ├── WDM/  Wavelet Decomposition Module
-    ├── KFM/  Kalman Filter Module
-    ├── RDM/  Reaction-Diffusion Module
-    ├── EEM/  Energy Equalization Module
-    ├── TSFM/ Temporal-Spatial Fusion Module
-    ├── LVM/  Local Variance Modulator
-    └── ...
+
+### Inserting a block into a ResNet bottleneck
+
+```mermaid
+flowchart LR
+    X["input x<br/>[B, C, H, W]"] --> C1["Conv1×1 + BN + ReLU"]
+    C1 --> C2["Conv3×3 + BN + ReLU"]
+    C2 --> C3["Conv1×1 + BN"]
+    C3 --> BLK["🔷 Block<br/>SRM / DFA / ..."]
+    BLK --> ADD(("＋"))
+    RS["residual branch<br/>downsample"] --> ADD
+    ADD --> RE["ReLU"] --> Y["output y<br/>[B, C, H, W]"]
+
+    style BLK fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    style ADD fill:#fef3c7,stroke:#d97706,color:#78350f
 ```
 
-## Implemented Modules
+> Insertion point convention: **after the last convolution, before the residual add**.
+> See [`resnet_insert_example.py`](resnet_insert_example.py).
 
-| Date | Module | Full Name | Core Idea | Applications |
-|------|--------|-----------|-----------|-------------|
-| 05-27 | SRM | Selective Response Module | Group-wise statistics → position-sensitive channel modulation → soft-threshold sparsification | Classification/Detection/Segmentation |
-| 05-27 | DFA | Differential Feature Amplifier | Local neighborhood differences → difference-driven amplification → contrast sensitivity | Classification/Detection/Edge Detection |
-| 05-27 | CIM | Contextual Information Modulator | Dual-path (local + context) → spatially-adaptive mixing ratio | Classification/Detection/Segmentation |
-| 05-27 | GFF | Gated Feature Fusion | Three parallel transformations → joint spatial-channel gating → competitive fusion | Classification/Detection/Segmentation |
-| 05-27 | DRS | Dynamic Receptive Field Selector | Multi-dilation parallel branches → spatially-adaptive receptive field selection | Detection/Segmentation (multi-scale) |
-| 05-27 | AFM | Adaptive Frequency Modulation | Multi-kernel parallel → frequency band decomposition → spatially-adaptive frequency modulation | Classification/Detection/Image Restoration |
-| 05-27 | PFA | Progressive Feature Aggregator | Two-stage coarse-fine tuning → inter-stage information bridge → residual accumulation | Classification/Detection/Segmentation |
-| 05-27 | SAM | Spatial Affinity Module | Low-rank projection → affinity matrix → information propagation → global context | Segmentation/Detection/Generation |
-| 05-27 | CRM | Channel Recalibration Module | Activation entropy estimation → entropy-guided channel evaluation → redundancy suppression | Classification/Detection/Segmentation |
-| 05-27 | LCR | Local Context Reconstructor | Per-position dynamic neighborhood weights → dedicated local convolution kernel → adaptive aggregation | Classification/Detection/Segmentation |
-| 05-28 | RIM | Recursive Inference Module | Weight-shared recursive transformation → iterative embedding → residual accumulation refinement | Classification/Detection/Segmentation |
-| 05-28 | PDR | Polarized Dual Representation | Spatial/semantic dual pathways → cross gating → polarized feature fusion | Classification/Detection/Segmentation |
-| 05-28 | SSM | Saliency-Guided Suppression Module | Saliency detection → adaptive threshold → soft suppression → information budget reallocation | Classification/Detection/Segmentation |
-| 05-29 | PGM | Progressive Gating Module | Three-stage cascaded gating (coarse→medium→fine) → channel-wise adaptive fusion | Classification/Detection/Segmentation |
-| 05-29 | FEM | Feature Equilibrium Module | Channel statistics encoding → equilibrium energy learning → exponential smoothing adjustment | Classification/Detection/Segmentation |
-| 05-29 | IGM | Information Gathering Module | Multi-scale depthwise separable gathering → spatially-adaptive scale weights | Classification/Detection/Segmentation |
-| 05-30 | RGM | Reciprocal Guidance Module | Channel-spatial dual-branch reciprocal guidance → bidirectional information modulation | Classification/Detection/Segmentation |
-| 05-30 | DSM | Dual-Scale Modulator | Coarse-fine dual-scale mutual modulation → context guidance + detail reinjection | Classification/Detection/Segmentation |
-| 05-30 | OEM | Order-Statistic Enhancement Module | Multi-order statistic extraction → spatially-adaptive statistic selection → robust enhancement | Classification/Detection/Segmentation |
-| 05-31 | MPM | Momentum Propagation Module | Large-kernel smoothed momentum reference → transient deviation awareness → adaptive modulation | Classification/Detection/Segmentation |
-| 05-31 | PCM | Phase-Coherence Module | FFT frequency domain decoupling → amplitude recalibration + phase coherence enhancement | Classification/Detection/Segmentation |
-| 05-31 | CGM | Conditional Gating Module | Learnable conditional prototypes → similarity-driven gating → semantic reference enhancement | Classification/Detection/Segmentation |
-| 06-01 | IRM | Information Routing Module | Multi-expert content-aware routing → spatially-adaptive mixture of experts | Classification/Detection/Segmentation |
-| 06-01 | BSM | Bilateral Similarity Module | K×K neighborhood content similarity → bilateral adaptive weighted aggregation | Classification/Detection/Segmentation |
-| 06-01 | DGM | Diversity-Guided Module | Channel Gram matrix → redundancy score-driven modulation → diversity enhancement | Classification/Detection/Segmentation |
-| 06-03 | SUM | Spatial Uncertainty Module | Local uncertainty estimation → uncertainty-guided smoothing/preservation dual-path fusion | Classification/Detection/Segmentation |
-| 06-03 | AGM | Adaptive Granularity Module | Granularity preference map → coarse-fine dual branch → spatially-adaptive granularity interpolation | Classification/Detection/Segmentation |
-| 06-03 | RAM | Residual Amplification Module | Base-residual decomposition → residual information analysis → content-aware amplification/suppression | Classification/Detection/Segmentation |
-| 06-06 | TCM | Tensor Completion Module | Low-rank tensor decomposition → signal subspace completion → structure-preserving fusion | Classification/Detection/Segmentation |
-| 06-06 | NLM | Non-local Modulation Module | QKV projection → non-local affinity → modulation signal generation → residual modulation | Classification/Detection/Segmentation |
-| 06-06 | EDM | Entropy-Driven Module | Local information entropy estimation → entropy-guided enhancement/compression → adaptive resource allocation | Classification/Detection/Segmentation |
-| 06-06 | FIM | Frequency Importance Module | DCT frequency domain decomposition → frequency importance learning → spectral recalibration → IDCT | Classification/Detection/Segmentation |
-| 06-06 | HTM | Hierarchical Transformation Module | Three-stage progressive transformation → information bridging → adaptive stage fusion | Classification/Detection/Segmentation |
-| 06-06 | WAM | Weighted Attention Module | Four-mode parallel attention → mode fusion weight learning → adaptive combination | Classification/Detection/Segmentation |
-| 06-06 | RCM | Recursive Convolution Module | Weight-shared recursive convolution → termination gate → spatially-adaptive processing depth | Classification/Detection/Segmentation |
-| 06-06 | CAM | Contrast-Aware Module | Local contrast estimation → sharpening/smoothing dual path → contrast-guided fusion | Classification/Detection/Segmentation |
-| 06-06 | SDM | Spectral Decomposition Module | Channel covariance spectral decomposition → subspace separation → spectral-domain adaptive filtering | Classification/Detection/Segmentation |
-| 06-06 | QEM | Quantile Enhancement Module | Quantile estimation → robust quantile normalization → distribution-aware enhancement | Classification/Detection/Segmentation |
-| 06-18 | WDM | Wavelet Decomposition Module | Haar DWT subband decomposition → low-freq channel refinement + high-freq soft-threshold denoising → IDWT reconstruction | Classification/Detection/Segmentation/Image Restoration |
-| 06-18 | KFM | Kalman Filter Module | Transition-based state prediction → innovation → adaptive Kalman gain blend of prediction & observation | Classification/Detection/Segmentation/Image Restoration |
-| 06-18 | RDM | Reaction-Diffusion Module | Activator/inhibitor dual-field → Laplacian diffusion + nonlinear reaction → iterative Turing dynamics | Classification/Detection/Segmentation |
-| 06-18 | EEM | Energy Equalization Module | Channel energy statistics → adaptive scaling → energy-aware dual-path equalization | Classification/Detection/Segmentation |
-| 06-18 | TSFM | Temporal-Spatial Fusion Module | Spatial/semantic dual-path encoding → cross-attention fusion → bidirectional spatial-channel modulation | Classification/Detection/Segmentation |
-| 06-18 | LVM | Local Variance Modulator | Multi-scale variance estimation → variance-aware dual-path modulation → adaptive detail/suppression fusion | Classification/Detection/Segmentation |
-| 06-19 | CFM | Channel Frequency Mixer | DCT frequency transform → learnable frequency mixing matrix → cross-channel frequency information exchange | Classification/Detection/Segmentation |
-| 06-19 | SGM | Spatial Gradient Modulator | Sobel gradient extraction → gradient magnitude-direction joint encoding → direction-aware feature modulation | Classification/Detection/Segmentation/Edge Detection |
-| 06-19 | DEM | Dense Evolution Module | Multi-scale variation generation → information entropy fitness evaluation → Top-k natural selection → evolution fusion | Classification/Detection/Segmentation |
-| 06-19 | PAM | Phase Alignment Module | Gabor phase estimation → adaptive phase shift → phase consistency constraint → residual fusion | Image Fusion/Restoration |
-| 06-19 | FGM | Feature Gating Module | Cooperative gating → local context awareness → bidirectional channel interaction → sparse activation | Classification/Detection/Segmentation |
-| 06-19 | MCM | Multi-Scale Context Module | Multi-scale parallel extraction → adaptive scale weights → scale interaction → global-local fusion | Segmentation/Detection/Classification |
-| 06-19 | DWM | Dynamic Weight Module | Content encoding → modulation factor prediction → progressive modulation → smoothness constraint | Classification/Detection/Style Transfer |
-| 06-19 | ERM | Edge Response Module | Learnable edge detection → edge enhancement → edge-nonedge separation → adaptive fusion | Edge Detection/Segmentation/Detection |
-| 06-19 | STM | Spatial-Channel Transformer Module | Spatial-channel joint encoding → bidirectional cross-attention → position encoding enhancement → multi-head transform | Classification/Detection/Segmentation |
-| 06-19 | LHM | Local Histogram Module | Differentiable soft binning → local distribution statistics → distribution-aware enhancement → residual fusion | Classification/Anomaly Detection/Texture Analysis |
-| 06-19 | CCM | Channel Correlation Module | Channel correlation matrix → low-rank approximation → correlation-guided enhancement → regularization | Classification/Detection/Segmentation |
-| 06-19 | RVM | Random Variation Module | Controlled random injection → temperature control → feature-level enhancement → variance-preserving normalization | Classification/Detection/Robustness |
-| 06-19 | KSM | Kernel Selection Module | Position-aware kernel selection → differentiable soft selection → multi-scale parallel → sparse regularization | Classification/Detection/Segmentation |
-| 06-20 | OSM | Offset Spatial Mixing | Deformable offset learning → offset continuity constraint → multi-scale offset fusion → offset-aware aggregation | Classification/Detection/Segmentation |
-| 06-20 | VGM | Variational Gaussian Mixing | Gaussian distribution modeling → variational inference → uncertainty-aware mixing → sampling augmentation | Classification/Detection/Segmentation |
-| 06-20 | ABM | Adaptive Batch Module | Content-aware statistics → dual modulation → lightweight prediction → progressive normalization | Classification/Style Transfer/Domain Adaptation |
-| 06-20 | BFM | Batch Fusion Module | Batch statistics → inter-sample attention → adaptive fusion → computation efficient | Classification/Metric Learning/Few-Shot Learning |
-| 06-20 | CVM | Channel Variance Module | Channel variance estimation → variance-guided enhancement → variance normalization → residual fusion | Classification/Feature Selection/Channel Pruning |
-| 06-20 | DPM | Dense Prediction Module | Global-local fusion → adaptive weights → dense prediction head → multi-task support | Segmentation/Depth Estimation/Detection |
-| 06-20 | FTM | Frequency Transform Module | Lightweight Haar transform → band selection → frequency enhancement → inverse transform fusion | Classification/Restoration/Denoising |
-| 06-20 | GCM | Gradient Correlation Module | Multi-direction gradients → gradient correlation calculation → correlation-guided enhancement → structure preservation | Edge Detection/Segmentation/Texture Analysis |
-| 06-20 | JRM | Joint Reasoning Module | Multi-relation modeling → relation interaction → joint reasoning → reasoning gate | Scene Understanding/Visual Question Answering/Relation Detection |
-| 06-20 | NAM | Neural Attention Module | Multi-scale attention → scale interaction → attention fusion → neural modulation | Classification/Detection/Segmentation |
-| 06-20 | ARM | Attention Refinement Module | Iterative refinement → residual refinement → refinement gate → convergence detection | Classification/Detection/Segmentation |
-| 06-20 | CLM | Context Learning Module | Multi-type context → context selection → context interaction → learnable fusion | Segmentation/Scene Understanding/Classification |
-| 06-20 | DFM | Dynamic Feature Module | Content encoding → parameter prediction → dynamic processing → output refinement | Classification/Style Transfer/Domain Adaptation |
-| 06-20 | ESM | Enhanced Spatial Module | Spatial position encoding → content-adaptive sampling → multi-scale spatial modeling → spatial consistency | Detection/Segmentation/Pose Estimation |
-| 06-20 | FCM | Feature Correlation Module | Low-rank correlation → correlation pattern learning → correlation-guided enhancement → output refinement | Classification/Detection/Segmentation |
-| 06-20 | GFM | Global Fusion Module | Global semantic extraction → local detail enhancement → adaptive fusion → semantic-guided enhancement | Classification/Segmentation/Scene Understanding |
-| 06-20 | HPM | Hierarchical Prediction Module | Hierarchical prediction → inter-level passing → progressive refinement → multi-level fusion | Segmentation/Detection/Depth Estimation |
-| 06-20 | IPM | Iterative Processing Module | Iterative processing → residual accumulation → iteration gate → adaptive iteration count | Restoration/Denoising/Super-Resolution |
-| 06-20 | JSM | Joint Selection Module | Spatial selection → channel selection → selection consistency → joint sparse activation | Classification/Detection/Segmentation |
-| 06-20 | KBM | Knowledge Bridge Module | Knowledge encoding → semantic alignment → bridge passing → adaptive bridge strength | Multi-scale Fusion/Cross-layer Passing |
+---
 
-## Usage
+## 🧠 Module Categories
 
-Each module can be used as a plug-and-play component embedded into existing networks:
+```mermaid
+mindmap
+  root((vision-blocks))
+    Attention and Modulation
+      SRM
+      NAM
+      WAM
+      ARM
+      SSM
+      NLM
+      STM
+      BQA
+      SLA
+      GSA
+      HAT
+      CST
+      SLT
+      HYC
+      SGT
+    Gating and Channel Selection
+      CGM
+      GFF
+      PGM
+      JSM
+      FGM
+      CRM
+      CCM
+      CVM
+      DGM
+      FEM
+      SDM
+      TFB
+    Frequency and Wavelet
+      AFM
+      CFM
+      FIM
+      FTM
+      PCM
+      PAM
+      WDM
+      CWB
+      FPG
+      TLP
+      FSF
+      WLS
+    Multi-scale and Context
+      AGM
+      CIM
+      CLM
+      DRS
+      DSM
+      IGM
+      MCM
+      KSM
+      HTM
+      UCM
+    Fusion and Interaction
+      BFM
+      GFM
+      KBM
+      TSFM
+      RGM
+      PDR
+      CFA
+      WMF
+    Spatial Structure and Statistics
+      ESM
+      OSM
+      LCR
+      BSM
+      SAM
+      SUM
+      LVM
+      SGM
+      CAM
+      DFA
+      ERM
+      EDM
+      OEM
+      ABM
+      EEM
+      QEM
+      LHM
+      KFM
+      MPM
+      RAM
+      VGM
+      RVM
+      RDM
+    Dynamic and Recursive
+      DFM
+      DWM
+      IRM
+      IPM
+      PFA
+      RCM
+      RIM
+    Correlation and Reasoning
+      FCM
+      GCM
+      DPM
+      HPM
+      JRM
+    Other Operators and Losses
+      DEM
+      TCM
+      DPS
+      SPA
+      CKA
+      ELN
+      AUG
+      SLU
+      L2B
+      HLU
+      RKG
+      LKS
+      SGN
+      SFI
+      VPT
+      SAE
+      DIP
+      DRL
+      HBN
+      MIE
+      LTF
+      ZSM
+```
+
+| Category | Description | Representative blocks |
+|----------|-------------|----------------------|
+| 🎯 **Attention & Modulation** | Channel / spatial / global attention, non-local, slot attention, hyper-connections | SRM · WAM · BQA · SLA · GSA · SLT · HYC |
+| 🚪 **Gating & Channel Selection** | SE-style, conditional prototypes, progressive gating, channel correlation | CGM · PGM · CRM · TFB |
+| 🌊 **Frequency & Wavelet** | DCT / FFT / Haar wavelet, phase processing, low-pass filtering | AFM · FIM · WDM · CWB · FPG · TLP · FSF |
+| 🔍 **Multi-scale & Context** | Receptive-field selection, coarse-fine coupling, context mixing | DRS · DSM · CIM · UCM |
+| 🔗 **Fusion & Interaction** | Multi-branch / cross-modal / global-local fusion | GFF · TSFM · CFA · WMF |
+| 📐 **Spatial Structure & Statistics** | Edges, variance, entropy, histograms, normalization | DFA · SGM · LVM · QEM · KFM |
+| 🔁 **Dynamic & Recursive** | Dynamic weights, expert routing, recursive / progressive refinement | IRM · RIM · PFA · DWM |
+| 🧮 **Correlation & Reasoning** | Feature / gradient correlation, dense prediction, joint reasoning | FCM · GCM · DPM · JRM |
+| 🧰 **Other Operators & Losses** | Evolution, completion, shifting, position alignment, activation, loss, augmentation, postprocess | DEM · TCM · DPS · SPA · CKA · ELN · AUG · SLU · L2B · HLU · RKG |
+
+---
+
+## 📊 Stats Strip
+
+<div align="center">
+
+| 📦 Total blocks | 🧪 Original | 📄 Paper-sourced | 🔌 BCL adapters |
+|:---------------:|:-----------:|:----------------:|:---------------:|
+| **114** | **77** | **37** | **38** |
+
+</div>
+
+**Paper-sourced blocks · venue breakdown**
+
+| Venue | Count | Blocks |
+|-------|:-----:|--------|
+| CVPR 2026 | 12 | BQA · ELN · FPG · SLA · SLU · L2B · FSF · LKS · SGN · SFI · VPT · SAE |
+| ECCV 2026 | 9 | CFA · CST · DPS · HAT · SLT · SPA · HLU · DIP · DRL |
+| ICCV 2025 | 7 | CKA · CWB · GSA · TFB · UCM · MIE · LTF |
+| NeurIPS 2026 | 3 | AUG · HYC · WMF |
+| NeurIPS 2025 / JMLR | 6 | TLP · RKG · HBN · SGT · ZSM · WLS |
+
+**License breakdown (paper-sourced blocks)**
+
+| License | Count |
+|---------|:-----:|
+| MIT | 24 |
+| Apache-2.0 | 12 |
+| BSD-3-Clause | 1 |
+
+---
+
+## 📚 Module Catalog
+
+### A. Paper-Sourced Modules
+
+> Equivalence-extracted from official code of CVPR 2026 / ECCV 2026 / NeurIPS 2026-2025 / ICCV 2025 papers.
+> **Please cite the original papers**; code remains under the original upstream licenses.
+
+| Block | Paper | Venue | License | Core idea | Code |
+|-------|-------|-------|---------|-----------|------|
+| **BQA** | [BinaryAttention: One-Bit QK-Attention for Vision and Diffusion Transformers](https://arxiv.org/abs/2603.09582) | CVPR 2026 | Apache-2.0 | 1-bit QK-quantized attention to cut softmax attention compute & memory | [`blocks/BQA/bqa.py`](blocks/BQA/bqa.py) |
+| **ELN** | [Enhancing Out-of-Distribution Detection with Extended Logit Normalization](https://arxiv.org/abs/2504.11434) | CVPR 2026 | MIT | Extended Logit Normalization **loss** (hyperparameter-free) for OOD detection | [`blocks/ELN/eln.py`](blocks/ELN/eln.py) |
+| **FPG** | [PFGNet: A Fully Convolutional Frequency-Guided Peripheral Gating Network](https://arxiv.org/abs/2602.20537) | CVPR 2026 | Apache-2.0 | Frequency decomposition (Sobel/Laplacian/local variance) guided center-periphery gating | [`blocks/FPG/fpg.py`](blocks/FPG/fpg.py) |
+| **SLA** | [SAT: Selective Aggregation Transformer for Image Super-Resolution](https://arxiv.org/abs/2604.07994) | CVPR 2026 Findings | MIT | Cluster-and-merge selective aggregation attention for lightweight SR | [`blocks/SLA/sla.py`](blocks/SLA/sla.py) |
+| **CFA** | [AMG-Fuse: Multi-modality Image Fusion under Adverse Weather](https://arxiv.org/abs/2606.26812) | ECCV 2026 | MIT | Channel-wise attention + SE-gated fusion for adverse-weather VI-IR fusion | [`blocks/CFA/cfa.py`](blocks/CFA/cfa.py) |
+| **CST** | [CUST: Clustered Unit-level Similarity Transformer for Lightweight Image SR](https://arxiv.org/abs/2607.11088) | ECCV 2026 | MIT | Clustered unit-level similarity attention: cluster assignment + masked windowed KV | [`blocks/CST/cst.py`](blocks/CST/cst.py) |
+| **DPS** | [SAM+D: Parameter-Efficient Dimensional Lifting of SAM via Depth-Routed LoRA](https://arxiv.org/abs/2607.29033) | ECCV 2026 | MIT | Zero-parameter neighborhood depth-shift operator (boundary-preserving) | [`blocks/DPS/dps.py`](blocks/DPS/dps.py) |
+| **HAT** | [AMG-Fuse: Multi-modality Image Fusion under Adverse Weather](https://arxiv.org/abs/2606.26812) | ECCV 2026 | MIT | Dynamic histogram self-attention: sort + box/interleaved dual-branch grouping | [`blocks/HAT/hat.py`](blocks/HAT/hat.py) |
+| **SLT** | [SSync: Selective Synergistic Learning for Video Object-Centric Learning](https://arxiv.org/abs/2606.15527) | ECCV 2026 | MIT | Slot attention: inter-slot competition + GRU update | [`blocks/SLT/slt.py`](blocks/SLT/slt.py) |
+| **SPA** | [HRDiT: Training-Free High-Resolution Image Generation with Off-the-Shelf DiT](https://arxiv.org/abs/2608.07003) | ECCV 2026 | MIT | Bundle position-id alignment variants averaged (RoPE-friendly positional alignment) | [`blocks/SPA/spa.py`](blocks/SPA/spa.py) |
+| **CKA** | [SL²A-INR: Single-Layer Learnable Activation for Implicit Neural Representation](https://arxiv.org/abs/2409.10836) | ICCV 2025 | MIT | Chebyshev-polynomial learnable activation (ChebyKAN-style) | [`blocks/CKA/cka.py`](blocks/CKA/cka.py) |
+| **CWB** | [CWNet: Causal Wavelet Network for Low-Light Image Enhancement](https://github.com/bywlzts/CWNet-Causal-Wavelet-Network) | ICCV 2025 | MIT | Causal Haar wavelet decompose-enhance-reconstruct (LL refine + high-freq detail) | [`blocks/CWB/cwb.py`](blocks/CWB/cwb.py) |
+| **GSA** | [GREAT-Stereo: Global Regulation and Excitation via Attention Tuning](https://openaccess.thecvf.com/content/ICCV2025/papers/Li_Global_Regulation_and_Excitation_via_Attention_Tuning_for_Stereo_Matching_ICCV_2025_paper.pdf) | ICCV 2025 | Apache-2.0 | Sink-competition global re-normalization spatial attention | [`blocks/GSA/gsa.py`](blocks/GSA/gsa.py) |
+| **TFB** | [TinyNeXt: An Efficient Hybrid Vision Transformer for TinyML Applications](https://openaccess.thecvf.com/content/ICCV2025/papers/Zeng_An_Efficient_Hybrid_Vision_Transformer_for_TinyML_Applications_ICCV_2025_paper.pdf) | ICCV 2025 | MIT | SE-gated + DW-conv + MLP triple-residual lightweight CNN block (impl class SEB) | [`blocks/TFB/seb.py`](blocks/TFB/seb.py) |
+| **UCM** | [UniConvNet: Expanding Effective Receptive Field while Maintaining Asymptotically Gaussian Distribution](https://arxiv.org/abs/2508.09000) | ICCV 2025 | MIT | Progressive expanding DW-kernel convolution modulation (ConvMod) | [`blocks/UCM/ucm.py`](blocks/UCM/ucm.py) |
+| **WMF** | [WaveMamba: Wave-Inspired Cross-Modal Fusion for Event-Image Segmentation](https://github.com/adeelferozmirza/WaveMamba) | NeurIPS 2026 | MIT | Wave-inspired multi-dilation PointConv gated fusion (event-image cross-modal) | [`blocks/WMF/wmf.py`](blocks/WMF/wmf.py) |
+| **SLU** | [LSM: Linear Recurrent Unit with Semantic Modulation for Image Super-Resolution](https://arxiv.org/abs/2606.19901) | CVPR 2026 Findings | Apache-2.0 | Semantic-dictionary-modulated Linear Recurrent Unit + parallel prefix scan | [`blocks/SLU/slu.py`](blocks/SLU/slu.py) |
+| **L2B** | [AD-GBC: Anisotropic Granular-Ball Skip-Connection Refiner](https://github.com/SiaShen-dot/AD-GBC) | CVPR 2026 | MIT | Anisotropic differentiable granular-ball reweighting + Lo2 local operator | [`blocks/L2B/l2b.py`](blocks/L2B/l2b.py) |
+| **FSF** | [Spectral Scalpel: Frequency-Selective Filtering for Action Segmentation](https://github.com/HaoyuJi/SpecScalpel) | CVPR 2026 | MIT | Learnable FFT real/imag modulation + dynamic-routed selective filter (2D adapted) | [`blocks/FSF/fsf.py`](blocks/FSF/fsf.py) |
+| **HLU** | [Hybrid-LUT: Channel-Aware Hybrid Lookup Table and Filtering](https://arxiv.org/abs/2608.11646) | ECCV 2026 | MIT | Trilinear LUT interpolation + channel-statistic softmax mixing of multiple LUTs | [`blocks/HLU/hlu.py`](blocks/HLU/hlu.py) |
+| **AUG** | [AuGhostmentation: The Eyes Never Stand Still—Why Should CNNs?](https://openreview.net/forum?id=UrYjjK6We7) | NeurIPS 2026 | MIT | Micro-saccade-inspired train-time random shift augmentation (identity at eval) | [`blocks/AUG/aug.py`](blocks/AUG/aug.py) |
+| **HYC** | [s2HC: Spectral-Sphere-Constrained Hyper-Connections](https://arxiv.org/abs/2603.20896) | NeurIPS 2026 | Apache-2.0 | Multi-stream residual hyper-connections (spectral-sphere Cayley mixing) | [`blocks/HYC/hyc.py`](blocks/HYC/hyc.py) |
+| **TLP** | [Alias-Free ViT: Fractional Shift Invariance via Linear Attention](https://github.com/hmichaeli/alias_free_vit) | NeurIPS 2025 | Apache-2.0 | Truncated FFT low-pass filter (anti-aliasing / fractional-shift equivariance) | [`blocks/TLP/tlp.py`](blocks/TLP/tlp.py) |
+| **RKG** | [RankSEG: Consistent Ranking-Based Framework for Segmentation](https://www.jmlr.org/papers/v24/22-0712.html) | JMLR 2023 + NeurIPS 2025 | BSD-3-Clause | Dice/IoU-consistent ranking re-labeling postprocess (RMA solver) | [`blocks/RKG/rkg.py`](blocks/RKG/rkg.py) |
+| **LKS** | [UCAN: Unified Convolutional Attention Network for Lightweight SR](https://arxiv.org/abs/2603.11680) | CVPR 2026 | Apache-2.0 | Large-Kernel Spatial Attention (LKSA) via dilated DW conv | [`blocks/LKS/lks.py`](blocks/LKS/lks.py) |
+| **SGN** | [UCAN: Unified Convolutional Attention Network for Lightweight SR](https://arxiv.org/abs/2603.11680) | CVPR 2026 | Apache-2.0 | Spatial-Gate Feature Fusion (SGFN) | [`blocks/SGN/sgn.py`](blocks/SGN/sgn.py) |
+| **SFI** | [LaDy: Lagrangian-Dynamic Informed Network](https://github.com/HaoyuJi/LaDy) | CVPR 2026 | MIT | Spatial feature injection + dynamic fusion | [`blocks/SFI/sfi.py`](blocks/SFI/sfi.py) |
+| **VPT** | [FOZO: Forward-Only Zeroth-Order Prompt Optimization for TTA](https://arxiv.org/abs/2603.04733) | CVPR 2026 | MIT | Visual learnable prompt injection modulation | [`blocks/VPT/vpt.py`](blocks/VPT/vpt.py) |
+| **DIP** | [DIPE: Inter-Modal Distance Invariant Position Encoding](https://arxiv.org/abs/2603.10863) | ECCV 2026 | MIT | Inter-modal distance-invariant RoPE phase rearrangement | [`blocks/DIP/dip.py`](blocks/DIP/dip.py) |
+| **DRL** | [SAM+D: Depth-Routed LoRA and Depth Shifting](https://arxiv.org/abs/2607.29033) | ECCV 2026 | MIT | Depth-routed low-rank expert adapter | [`blocks/DRL/drl.py`](blocks/DRL/drl.py) |
+| **MIE** | [MobileIE: Extremely Lightweight ConvNet for Real-Time Enhancement](https://arxiv.org/abs/2507.01838) | ICCV 2025 | Apache-2.0 | Ultra-lightweight real-time enhancement conv block | [`blocks/MIE/mie.py`](blocks/MIE/mie.py) |
+| **LTF** | [LUT-Fuse: Extremely Fast IR-VIS Fusion via Learnable LUTs](https://github.com/zyb5/LUT-Fuse) | ICCV 2025 | MIT | Learnable lookup-table fusion unit | [`blocks/LTF/ltf.py`](blocks/LTF/ltf.py) |
+| **HBN** | [HybridNorm: Stable and Efficient Transformer Training](https://arxiv.org/abs/2503.04598) | NeurIPS 2025 | Apache-2.0 | QKV-norm + FFN Post-Norm hybrid normalization | [`blocks/HBN/hbn.py`](blocks/HBN/hbn.py) |
+| **SGT** | [SeerAttention: Self-distilled Attention Gating](https://arxiv.org/abs/2410.13276) | NeurIPS 2025 | MIT | Block-wise trainable sparse attention gating | [`blocks/SGT/sgt.py`](blocks/SGT/sgt.py) |
+| **ZSM** | [ZigzagPointMamba: Spatial-Semantic Mamba for Point Cloud](https://github.com/Rabbitttttt218/ZigzagPointMamba) | NeurIPS 2025 | Apache-2.0 | Zigzag spatial-semantic bidirectional scan mixing | [`blocks/ZSM/zsm.py`](blocks/ZSM/zsm.py) |
+| **WLS** | [WaLRUS: Wavelets for Long-range Representation Using SSM](https://github.com/echbaba/walrus) | NeurIPS 2025 | Apache-2.0 | Wavelet multi-scale decomposition + per-band SSM | [`blocks/WLS/wls.py`](blocks/WLS/wls.py) |
+| **SAE** | [Sparsemax SAE: Improving Sparse Autoencoder with Dynamic Attention](https://github.com/qyj-bkjx/Sparsemax-SAE) | CVPR 2026 | MIT | Sparsemax dynamic sparse autoencoder (interpretable sparse features) | [`blocks/SAE/sae.py`](blocks/SAE/sae.py) |
+
+<details>
+<summary>📌 Paper-extraction conventions (click to expand)</summary>
+
+- Equivalence-only rewrite: renaming, dependency removal, interface unification, parameterizing
+  hardcoded values; **numerical logic preserved line-by-line**.
+- Header comments retain: paper title / venue / link / code source / original license / module provenance / rewrite notes.
+- If the original is natively 1D/3D/token-based, reshape inside the class to the 4D `[B,C,H,W]` contract.
+
+</details>
+
+### B. Original Modules
+
+> Experimental modules proposed by **BUG423**, **not yet published**.
+> Ablation studies on your own tasks are very welcome.
+
+<details open>
+<summary>Click to fold / unfold the full table (77 blocks)</summary>
+
+| Block | Name | Core idea | Tasks |
+|-------|------|-----------|-------|
+| **ABM** | Adaptive Batch Module | Content-aware statistics modulating mean & variance | cls / style transfer |
+| **AFM** | Adaptive Frequency Modulation | Multi-kernel band approximation + spatial-adaptive frequency modulation | cls / det / restoration |
+| **AGM** | Adaptive Granularity Module | Granularity-preference map soft-interpolating coarse/fine branches | cls / det / seg |
+| **ARM** | Attention Refinement Module | Iterative residual refinement with refinement gate | cls / det / seg |
+| **BFM** | Batch Fusion Module | Batch statistics + inter-sample attention interaction | cls / metric learning |
+| **BSM** | Bilateral Similarity Module | Neighborhood content-similarity bilateral aggregation | cls / det / seg |
+| **CAM** | Contrast-Aware Module | Local contrast drives sharpen / smooth dual path | cls / det / edge |
+| **CCM** | Channel Correlation Module | Low-rank channel correlation matrix enhancement | cls / det / seg |
+| **CFM** | Channel Frequency Mixer | DCT-domain cross-channel frequency exchange | cls / det / seg |
+| **CGM** | Conditional Gating Module | Learnable conditional prototypes drive gating | cls / det / seg |
+| **CIM** | Contextual Information Modulator | Per-location local vs global context mixing ratio | cls / det / seg |
+| **CLM** | Context Learning Module | Multi-type context adaptive selection & fusion | seg / scene understanding |
+| **CRM** | Channel Recalibration Module | Activation-entropy guided channel recalibration | cls / det / seg |
+| **CVM** | Channel Variance Module | Variance-guided channel enhance / suppress | cls / feature selection |
+| **DEM** | Dense Evolution Module | Variation-select-retain evolutionary dense connection | cls / det / seg |
+| **DFA** | Differential Feature Amplifier | Local neighborhood difference drives amplification | cls / det / edge |
+| **DFM** | Dynamic Feature Module | Input-adaptive dynamic parameter generation | cls / style transfer |
+| **DGM** | Diversity-Guided Module | Gram redundancy score suppresses channel collapse | cls / det / seg |
+| **DPM** | Dense Prediction Module | Per-location dense head + global-local fusion | seg / depth |
+| **DRS** | Dynamic Receptive Field Selector | Per-location soft dilation-rate selection | det / seg |
+| **DSM** | Dual-Scale Modulator | Coarse-fine mutual modulation (context + detail reinjection) | cls / det / seg |
+| **DWM** | Dynamic Weight Module | Lightweight modulation factors dynamize conv weights | cls / style transfer |
+| **EDM** | Entropy-Driven Module | Local entropy drives enhance / compress | cls / det / seg |
+| **EEM** | Energy Equalization Module | Channel + spatial energy dual equalization | cls / det / seg |
+| **ERM** | Edge Response Module | Explicit edge-response extraction and enhancement | edge / seg / det |
+| **ESM** | Enhanced Spatial Module | Enhanced spatial encoding & adaptive sampling | det / seg / pose |
+| **FCM** | Feature Correlation Module | Low-rank global correlation-guided enhancement | cls / det / seg |
+| **FEM** | Feature Equilibrium Module | Channel equilibrium-energy learning and regulation | cls / det / seg |
+| **FGM** | Feature Gating Module | Cooperative gating + bidirectional channel interaction | cls / det / seg |
+| **FIM** | Frequency Importance Module | DCT frequency-importance learning and reweighting | cls / det / seg |
+| **FTM** | Frequency Transform Module | Haar-approx DCT + band selection enhancement | cls / restoration / denoise |
+| **GCM** | Gradient Correlation Module | Gradient-direction correlation guided enhancement | edge / seg / texture |
+| **GFF** | Gated Feature Fusion | Triple parallel branches + spatial-channel joint gating | cls / det / seg |
+| **GFM** | Global Fusion Module | Global semantic & local detail adaptive fusion | cls / seg / understanding |
+| **HPM** | Hierarchical Prediction Module | Multi-level prediction with progressive refinement | seg / det / depth |
+| **HTM** | Hierarchical Transformation Module | Three-stage progressive transformation + bridging | cls / det / seg |
+| **IGM** | Information Gathering Module | Multi-scale depthwise on-demand gathering | cls / det / seg |
+| **IPM** | Iterative Processing Module | Iterative processing + residual accumulation + adaptive steps | restoration / SR |
+| **IRM** | Information Routing Module | Multi-expert content-aware routing mixture | cls / det / seg |
+| **JRM** | Joint Reasoning Module | Spatial / semantic / contextual joint reasoning | scene / VQA |
+| **JSM** | Joint Selection Module | Spatial-channel joint sparse selection | cls / det / seg |
+| **KBM** | Knowledge Bridge Module | Cross-layer semantic alignment and bridging | multi-scale fusion |
+| **KFM** | Kalman Filter Module | Predict-update Kalman-gain fusion | cls / det / seg |
+| **KSM** | Kernel Selection Module | Per-location differentiable kernel-size soft selection | cls / det / seg |
+| **LCR** | Local Context Reconstructor | Per-location dynamic neighborhood reconstruction weights | cls / det / seg |
+| **LHM** | Local Histogram Module | Soft-binning differentiable histogram | cls / anomaly detection |
+| **LVM** | Local Variance Modulator | Local-variance dual-path detail / suppress modulation | cls / det / seg |
+| **MCM** | Multi-Scale Context Module | Adaptive scale weights over multi-scale context | seg / det / cls |
+| **MPM** | Momentum Propagation Module | Momentum reference + transient-deviation aware modulation | cls / det / seg |
+| **NAM** | Neural Attention Module | Multi-scale attention in parallel and fused | cls / det / seg |
+| **NLM** | Non-local Modulation Module | Non-local affinity for modulation rather than aggregation | cls / det / seg |
+| **OEM** | Order-Statistic Enhancement Module | Soft-sort order statistics for robust aggregation | cls / det / seg |
+| **OSM** | Offset Spatial Mixing | Deformable offsets with continuity constraints | cls / det / seg |
+| **PAM** | Phase Alignment Module | Gabor local phase estimation and alignment | fusion / restoration |
+| **PCM** | Phase-Coherence Module | FFT magnitude / phase decoupled processing | cls / det / seg |
+| **PDR** | Polarized Dual Representation | Spatial / semantic dual pathway with cross gating | cls / det / seg |
+| **PFA** | Progressive Feature Aggregator | Two-stage coarse-to-fine residual accumulation | cls / det / seg |
+| **PGM** | Progressive Gating Module | Three-stage cascaded gating (coarse → mid → fine) | cls / det / seg |
+| **QEM** | Quantile Enhancement Module | Quantile-based robust normalization and enhancement | cls / det / seg |
+| **RAM** | Residual Amplification Module | Base-residual split with content-aware amplification | cls / det / seg |
+| **RCM** | Recursive Convolution Module | Weight-shared recursion + termination gate adaptive depth | cls / det / seg |
+| **RDM** | Reaction-Diffusion Module | Turing reaction-diffusion dynamics evolution | cls / det / seg |
+| **RGM** | Reciprocal Guidance Module | Channel-spatial dual branch reciprocal guidance | cls / det / seg |
+| **RIM** | Recursive Inference Module | Weight-shared recursive inference refinement | cls / det / seg |
+| **RVM** | Random Variation Module | Controllable feature-level stochastic injection | cls / robustness |
+| **SAM** | Spatial Affinity Module | Low-rank spatial affinity information propagation | seg / det / generation |
+| **SDM** | Spectral Decomposition Module | Channel covariance spectral subspace filtering | cls / det / seg |
+| **SGM** | Spatial Gradient Modulator | Sobel gradient magnitude-direction joint modulation | cls / det / edge |
+| **SRM** | Selective Response Module | Location-sensitive channel modulation + soft threshold | cls / det / seg |
+| **SSM** | Saliency-Guided Suppression | Saliency soft-suppression reallocates attention budget | cls / det / seg |
+| **STM** | Spatial-Channel Transformer | Spatial-channel bidirectional cross-attention | cls / det / seg |
+| **SUM** | Spatial Uncertainty Module | Uncertainty-guided smooth / preserve dual path | cls / det / seg |
+| **TCM** | Tensor Completion Module | Low-rank tensor completion repairs degraded info | cls / det / seg |
+| **TSFM** | Temporal-Spatial Fusion | Spatial-channel cross-attention joint modeling | cls / det / seg |
+| **VGM** | Variational Gaussian Mixing | Variational inference uncertainty-aware mixing | cls / det / seg |
+| **WAM** | Weighted Attention Module | Four attention modes in parallel, learnably weighted | cls / det / seg |
+| **WDM** | Wavelet Decomposition Module | Haar subband refinement + soft-threshold denoise | cls / restoration / denoise |
+
+</details>
+
+---
+
+## 🚀 Quick Start
+
+### Install
+
+```bash
+git clone <repo-url>
+cd vision-blocks
+pip install torch   # Python >= 3.9, PyTorch >= 2.0
+```
+
+### Plug into a ResNet bottleneck
 
 ```python
-from blocks.RIM.rim import RIM
 import torch
+from blocks.SRM.srm import SRM
+from blocks.DFA.dfa import DFA
 
-rim = RIM(channels=64, num_iterations=3)
+# Unified contract: channels first, [B, C, H, W] -> [B, C, H, W]
+srm = SRM(channels=64)
 x = torch.randn(1, 64, 32, 32)
-out = rim(x)
-print(out.shape)  # [1, 64, 32, 32]
+print(srm(x).shape)   # torch.Size([1, 64, 32, 32])
 ```
 
-## Requirements
+### Full example: ResNet-50 + block
 
-- Python >= 3.8
-- PyTorch >= 1.10
-- thop (optional, for FLOPs statistics)
+```python
+# See resnet_insert_example.py — insert after conv3, before residual add
+from resnet_insert_example import ResNet50
 
-## Contributing
+model = ResNet50(num_classes=1000, attention_type='srm')   # or dfa / cim / gff / ...
+out = model(torch.randn(1, 3, 224, 224))
+print(out.shape)   # torch.Size([1, 1000])
+```
 
-Pull requests for new neural network modules are welcome. Please refer to the format of existing modules under `blocks/` and ensure complete documentation and test code are included.
+### Paper-sourced blocks
 
-## License
+```python
+from blocks.BQA.bqa import BQA      # CVPR 2026 · BinaryAttention
+from blocks.SLA.sla import SLA      # CVPR 2026 Findings · SAT
+from blocks.WMF.wmf import WMF      # NeurIPS 2026 · WaveMamba
 
-MIT License
+x = torch.randn(2, 64, 16, 16)
+print(BQA(channels=64)(x).shape)
+print(SLA(channels=64)(x).shape)
+print(WMF(channels=64)(x).shape)
+```
+
+### BCL time-series adapters
+
+```python
+# See adapters/bcl/ — expected input layout [batch, channels, time]
+# Each *_bcl.py file ships a minimal executable example.
+```
+
+---
+
+## 🔌 Unified Interface Contract
+
+All blocks follow the same contract (see `.mimocode/EXTRACT_SPEC.md`):
+
+```python
+class ABBREV(nn.Module):
+    def __init__(self, channels: int, **task_specific_kwargs):
+        ...
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        x:   [B, C, H, W]
+        out: [B, C, H, W]   # shape-preserving; exceptions must be documented
+        """
+```
+
+**Rules**
+
+1. The first constructor argument **must be `channels: int`** (use `in_channels, out_channels` when they differ, and document it).
+2. `forward` consumes 4D `[B,C,H,W]` by default; natively 1D/3D/token modules reshape inside the class.
+3. Default hyperparameters match the paper; add only necessary extras with paper defaults.
+4. **Never change numerical logic**: renames, dead-code removal, `nn` cleanup, parameterizing hardcodes, shape asserts only.
+5. Dependencies limited to `torch` / `torch.nn` / `torch.nn.functional` / `typing` / `math`.
+
+**Exception**: `ELN` is a loss function and outputs a scalar loss, not a feature map (noted in its header).
+
+---
+
+## 🧭 How to Add a Module
+
+### Adding an original module
+
+1. Create `blocks/<ABBREV>/<abbrev>.py`; `<ABBREV>` is 2–5 uppercase letters, unique vs existing dirs.
+2. Class name equals the abbreviation: `class ABBREV(nn.Module)`.
+3. Header notes `# 论文：原创模块，尚未发表` + proposer + date.
+4. Docstring uses the four-part format: **intro / structure / paper-writing notes / tasks**.
+5. File ends with `count_parameters` self-check and an `if __name__ == '__main__'` minimal example.
+
+### Extracting a paper module
+
+1. Keep full provenance in the header (paper title / venue / link / GitHub / license / module origin / rewrite notes).
+2. **Equivalence rewrite only**: drop third-party deps, unify the 4D interface, parameterize hardcodes; preserve numerical logic line-by-line.
+3. Record the original license in the header; downstream docs must say "cite the original paper".
+4. Full spec: [`.mimocode/EXTRACT_SPEC.md`](.mimocode/EXTRACT_SPEC.md).
+
+---
+
+## 📄 License & Citation
+
+### License
+
+This repository as a whole is released under the **MIT License**.
+
+⚠️ **Paper-sourced blocks** retain their **original licenses** (MIT / Apache-2.0; see the License column above).
+When using those blocks you must also honor the upstream license terms.
+
+### Citation
+
+- **Original modules** (SRM, DFA, CIM and the other 77): unpublished. If you use them in a paper, please note this repository and describe the modules used.
+- **Paper-sourced modules** (BQA, SLA, FPG and the other 37): you **must cite the original papers** (titles and links in the table above); code copyright remains with the original authors.
+
+```bibtex
+@misc{vision-blocks,
+  title        = {vision-blocks: Plug-and-Play PyTorch Blocks for Vision and Time-Series},
+  note         = {Experimental module zoo; validate on your own task},
+  howpublished = {\url{<repo-url>}},
+  year         = {2026}
+}
+```
+
+---
+
+<div align="center">
+
+**⚠️ Disclaimer**
+
+This repository is experimental research code; results vary by task.
+It does not guarantee SOTA on any dataset / task and does **not** constitute
+peer-reviewed conclusions. Validate independently on your target task and
+keep the original paper citations.
+
+<br/>
+
+[![中文](https://img.shields.io/badge/README-中文-f5a623)](README.md)
+[![English](https://img.shields.io/badge/README-English-2f80ed)](README_EN.md)
+
+</div>

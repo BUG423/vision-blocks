@@ -1,174 +1,577 @@
-# SOTA - State-of-the-Art Neural Network Modules
+<div align="center">
 
-[![中文](https://img.shields.io/badge/README-中文-red)](README.md)
-[![English](https://img.shields.io/badge/README-English-blue)](README_EN.md)
+# 🔷 vision-blocks
+
+**即插即用的 PyTorch 视觉 / 时序模块库 —— 实验性模块动物园**
+
+[![中文](https://img.shields.io/badge/README-中文-f5a623)](README.md)
+[![English](https://img.shields.io/badge/README-English-2f80ed)](README_EN.md)
+<br/>
+[![Python](https://img.shields.io/badge/Python-3.9%2B-3776ab?logo=python&logoColor=white)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c?logo=pytorch&logoColor=white)](https://pytorch.org/)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Modules](https://img.shields.io/badge/modules-114-informational)](#-模块总览)
+[![Paper](https://img.shields.io/badge/paper--sourced-37-blueviolet)](#a-顶会论文提取模块)
+[![Original](https://img.shields.io/badge/original-77-orange)](#b-原创模块)
+<br/>
+[![CVPR 2026](https://img.shields.io/badge/CVPR%202026-12-blue)](#-统计速览)
+[![ECCV 2026](https://img.shields.io/badge/ECCV%202026-9-blue)](#-统计速览)
+[![ICCV 2025](https://img.shields.io/badge/ICCV%202025-7-blue)](#-统计速览)
+[![NeurIPS 2026](https://img.shields.io/badge/NeurIPS%202026-3-blue)]<br/>
+[![NeurIPS 2025](https://img.shields.io/badge/NeurIPS%202025-6-blue)](#-统计速览)
 
 一个系统整理、实现和验证神经网络功能模块的开源仓库，覆盖计算机视觉与时序数据任务。
 
-> [!IMPORTANT]
-> 二维视觉模块与 BCL 时序适配模块全部维护在 `main`：前者位于 `blocks/`，后者位于 `adapters/bcl/`，无需切换分支。
+> ⚠️ **诚实声明**：本仓库是**实验性研究代码**（experimental module zoo），
+> **并非**宣称达到 SOTA 或已经同行评审。原创模块尚未发表；论文提取模块仅做等价重写。
+> 使用前请在你的目标任务上独立验证效果。
 
-## 项目简介
+</div>
 
-本项目整理可组合的 PyTorch 功能模块，涵盖图像分类、目标检测、语义分割和时序分析。每个实现应明确输入输出张量形状、适用任务、参数约束和最小运行示例。仓库中的实验性设计不应被表述为已经同行评审或达到 SOTA，使用前需要在目标任务上独立验证。
+---
 
-## 目录结构
+## 📑 目录
 
+- [✨ 项目特性](#-项目特性)
+- [🏗️ 架构总览](#️-架构总览)
+- [🧠 模块分类](#-模块分类)
+- [📊 统计速览](#-统计速览)
+- [📚 模块总览](#-模块总览)
+- [🚀 快速开始](#-快速开始)
+- [🔌 统一接口契约](#-统一接口契约)
+- [🧭 如何添加模块](#-如何添加模块)
+- [📄 许可证与引用](#-许可证与引用)
+
+---
+
+## ✨ 项目特性
+
+| | |
+|:---:|:---|
+| 🧩 **即插即用** | 每个模块是独立的 `nn.Module`，插入任意 CNN / Transformer 骨干即可 |
+| 📐 **统一张量接口** | 默认 `[B, C, H, W] → [B, C, H, W]`，形状保持，构造器首参为 `channels` |
+| 🧪 **双来源模块** | 原创实验模块（BUG423 提出）+ 顶会论文等价提取（CVPR / ECCV / ICCV / NeurIPS） |
+| 🌊 **时序适配** | `adapters/bcl/` 提供 BCL 时序格式适配器，把 1D 模块接到时序流水线 |
+| 📝 **文档完整** | 每个模块带四段式中文文档：简介 / 结构 / 论文写法 / 适用任务 |
+| ⚡ **零第三方依赖** | 纯 `torch` + `typing` + `math`，无 einops / timm / mamba 等外部依赖 |
+
+---
+
+## 🏗️ 架构总览
+
+### 仓库结构与模块流向
+
+```mermaid
+flowchart TB
+    subgraph SRC["模块来源"]
+        direction LR
+        A["🧪 原创模块<br/>77 个 · proposer BUG423"]
+        B["📄 顶会论文提取<br/>36 个 · CVPR / ECCV / ICCV / NeurIPS"]
+    end
+
+    subgraph REPO["vision-blocks 仓库"]
+        direction TB
+        BLK["blocks/ABBREV/abbrev.py<br/>视觉即插即用块"]
+        BCL["adapters/bcl/<br/>BCL 时序适配器"]
+    end
+
+    subgraph USE["下游使用"]
+        direction TB
+        CV["CV 骨干网络<br/>ResNet / ViT / ..."]
+        TS["时序流水线<br/>传感器 / 金融 / IoT"]
+    end
+
+    A --> BLK
+    B --> BLK
+    A --> BCL
+    BLK --> CV
+    BCL --> TS
+
+    style SRC fill:#eef2ff,stroke:#6366f1,color:#1e1b4b
+    style REPO fill:#f0fdf4,stroke:#22c55e,color:#14532d
+    style USE fill:#fff7ed,stroke:#f97316,color:#7c2d12
 ```
-SOTA/
-├── README.md
-├── README_EN.md
-├── resnet_insert_example.py
-├── adapters/
-│   └── bcl/    # BCL 时序输入与一维模块适配
-└── blocks/
-    ├── SRM/  选择性响应模块
-    ├── DFA/  差异性特征放大器
-    ├── CIM/  上下文信息调制器
-    ├── GFF/  门控特征融合模块
-    ├── DRS/  动态感受野选择器
-    ├── AFM/  自适应频率调制模块
-    ├── PFA/  渐进式特征聚合器
-    ├── SAM/  空间亲和力模块
-    ├── CRM/  通道重校准模块
-    ├── LCR/  局部上下文重构模块
-    ├── RIM/  递归推理模块
-    ├── PDR/  极化双表示模块
-    ├── SSM/  显著性引导抑制模块
-    ├── PGM/  渐进式门控模块
-    ├── FEM/  特征均衡模块
-    ├── IGM/  信息汇聚模块
-    ├── RGM/  互惠引导模块
-    ├── DSM/  双尺度调制器
-    ├── OEM/  序统计增强模块
-    ├── MPM/  动量传播模块
-    ├── PCM/  相位一致性模块
-    ├── CGM/  条件门控模块
-    ├── IRM/  信息路由模块
-    ├── BSM/  双边相似度模块
-    ├── DGM/  多样性引导模块
-    ├── SUM/  空间不确定性模块
-    ├── AGM/  自适应粒度模块
-    ├── RAM/  残差放大模块
-    ├── TCM/  张量补全模块
-    ├── NLM/  非局部调制模块
-    ├── EDM/  熵驱动模块
-    ├── FIM/  频率重要性模块
-    ├── HTM/  层次变换模块
-    ├── WAM/  加权注意力模块
-    ├── RCM/  递归卷积模块
-    ├── CAM/  对比度感知模块
-    ├── SDM/  谱分解模块
-    ├── QEM/  分位数增强模块
-    ├── EEM/  能量均衡模块
-    ├── TSFM/ 时序-空间融合模块
-    ├── LVM/  局部方差调制模块
-    └── ...
+
+### 在 ResNet 残差块中插入模块
+
+```mermaid
+flowchart LR
+    X["输入 x<br/>[B, C, H, W]"] --> C1["Conv1×1 + BN + ReLU"]
+    C1 --> C2["Conv3×3 + BN + ReLU"]
+    C2 --> C3["Conv1×1 + BN"]
+    C3 --> BLK["🔷 Block<br/>SRM / DFA / ..."]
+    BLK --> ADD(("＋"))
+    RS["残差分支<br/>downsample"] --> ADD
+    ADD --> RE["ReLU"] --> Y["输出 y<br/>[B, C, H, W]"]
+
+    style BLK fill:#dbeafe,stroke:#2563eb,color:#1e3a8a
+    style ADD fill:#fef3c7,stroke:#d97706,color:#78350f
 ```
 
-## 已实现模块
+> 插入点约定：**卷积之后、残差相加之前**。详见 [`resnet_insert_example.py`](resnet_insert_example.py)。
 
-| 日期 | 模块 | 全称 | 核心思想 | 适用任务 |
-|------|------|------|----------|----------|
-| 05-27 | SRM | Selective Response Module | 分组统计→位置敏感通道调制→软阈值稀疏化 | 分类/检测/分割 |
-| 05-27 | DFA | Differential Feature Amplifier | 局部邻域差异→差异驱动放大→对比度敏感 | 分类/检测/边缘检测 |
-| 05-27 | CIM | Contextual Information Modulator | 双路径(局部+上下文)→空间自适应混合比例 | 分类/检测/分割 |
-| 05-27 | GFF | Gated Feature Fusion | 三路并行变换→空间-通道联合门控→竞争性融合 | 分类/检测/分割 |
-| 05-27 | DRS | Dynamic Receptive Field Selector | 多膨胀率并行分支→空间自适应感受野选择 | 检测/分割(多尺度) |
-| 05-27 | AFM | Adaptive Frequency Modulation | 多核并行→频率带分解→空间自适应频率调制 | 分类/检测/图像恢复 |
-| 05-27 | PFA | Progressive Feature Aggregator | 两阶段粗调-精调→阶段间信息桥接→残差累积 | 分类/检测/分割 |
-| 05-27 | SAM | Spatial Affinity Module | 低秩投影→亲和力矩阵→信息传播→全局上下文 | 分割/检测/生成 |
-| 05-27 | CRM | Channel Recalibration Module | 激活熵估计→熵引导通道评估→冗余抑制 | 分类/检测/分割 |
-| 05-27 | LCR | Local Context Reconstructor | 逐位置动态邻域权重→专属局部卷积核→自适应聚合 | 分类/检测/分割 |
-| 05-28 | RIM | Recursive Inference Module | 权重共享递归变换→迭代嵌入→残差累积精炼 | 分类/检测/分割 |
-| 05-28 | PDR | Polarized Dual Representation | 空间/语义双通路→交叉门控→极化特征融合 | 分类/检测/分割 |
-| 05-28 | SSM | Saliency-Guided Suppression Module | 显著性检测→自适应阈值→软抑制→信息预算重分配 | 分类/检测/分割 |
-| 05-29 | PGM | Progressive Gating Module | 三阶段级联门控(粗→中→细)→通道级自适应融合 | 分类/检测/分割 |
-| 05-29 | FEM | Feature Equilibrium Module | 通道统计编码→均衡能量学习→指数平滑调节 | 分类/检测/分割 |
-| 05-29 | IGM | Information Gathering Module | 多尺度深度可分离汇聚→空间自适应尺度权重 | 分类/检测/分割 |
-| 05-30 | RGM | Reciprocal Guidance Module | 通道-空间双分支互惠引导→双向信息调制 | 分类/检测/分割 |
-| 05-30 | DSM | Dual-Scale Modulator | 粗-细双尺度互调→上下文引导+细节回注 | 分类/检测/分割 |
-| 05-30 | OEM | Order-Statistic Enhancement Module | 多序统计量提取→空间自适应统计选择→鲁棒增强 | 分类/检测/分割 |
-| 05-31 | MPM | Momentum Propagation Module | 大核平滑动量参考→瞬态偏差感知→自适应调制 | 分类/检测/分割 |
-| 05-31 | PCM | Phase-Coherence Module | FFT频域解耦→幅度重标定+相位一致性增强 | 分类/检测/分割 |
-| 05-31 | CGM | Conditional Gating Module | 可学习条件原型→相似度驱动门控→语义参照增强 | 分类/检测/分割 |
-| 06-01 | IRM | Information Routing Module | 多专家内容感知路由→空间自适应专家混合 | 分类/检测/分割 |
-| 06-01 | BSM | Bilateral Similarity Module | K×K邻域内容相似度→双边自适应加权聚合 | 分类/检测/分割 |
-| 06-01 | DGM | Diversity-Guided Module | 通道Gram矩阵→冗余分数驱动调制→多样性增强 | 分类/检测/分割 |
-| 06-03 | SUM | Spatial Uncertainty Module | 局部不确定性估计→不确定引导平滑/保持双路径融合 | 分类/检测/分割 |
-| 06-03 | AGM | Adaptive Granularity Module | 粒度偏好图→粗细双分支→空间自适应粒度插值 | 分类/检测/分割 |
-| 06-03 | RAM | Residual Amplification Module | 基座-残差分解→残差信息分析→内容感知放大/抑制 | 分类/检测/分割 |
-| 06-06 | TCM | Tensor Completion Module | 张量低秩分解→信号子空间补全→结构保持融合 | 分类/检测/分割 |
-| 06-06 | NLM | Non-local Modulation Module | QKV投影→非局部亲和力→调制信号生成→残差调制 | 分类/检测/分割 |
-| 06-06 | EDM | Entropy-Driven Module | 局部信息熵估计→熵引导增强/压缩→自适应资源分配 | 分类/检测/分割 |
-| 06-06 | FIM | Frequency Importance Module | DCT频域分解→频率重要性学习→频谱重标定→IDCT | 分类/检测/分割 |
-| 06-06 | HTM | Hierarchical Transformation Module | 三阶段递进变换→信息桥接→自适应阶段融合 | 分类/检测/分割 |
-| 06-06 | WAM | Weighted Attention Module | 四模式注意力并行→模式融合权重学习→自适应组合 | 分类/检测/分割 |
-| 06-06 | RCM | Recursive Convolution Module | 权重共享递归卷积→终止门→空间自适应处理深度 | 分类/检测/分割 |
-| 06-06 | CAM | Contrast-Aware Module | 局部对比度估计→锐化/平滑双路径→对比度引导融合 | 分类/检测/分割 |
-| 06-06 | SDM | Spectral Decomposition Module | 通道协方差谱分解→子空间分离→谱域自适应滤波 | 分类/检测/分割 |
-| 06-06 | QEM | Quantile Enhancement Module | 分位数估计→鲁棒分位数归一化→分布感知增强 | 分类/检测/分割 |
-| 06-18 | EEM | Energy Equalization Module | 通道能量统计→自适应缩放→能量感知双路径均衡 | 分类/检测/分割 |
-| 06-18 | TSFM | Temporal-Spatial Fusion Module | 空间/语义双路径编码→交叉注意力融合→双向空间-通道调制 | 分类/检测/分割 |
-| 06-18 | LVM | Local Variance Modulator | 多尺度方差估计→方差感知双路径调制→自适应细节/抑制融合 | 分类/检测/分割 |
-| 06-19 | CFM | Channel Frequency Mixer | DCT频域变换→可学习频率混合矩阵→跨通道频率信息交换 | 分类/检测/分割 |
-| 06-19 | SGM | Spatial Gradient Modulator | Sobel梯度提取→梯度幅值-方向联合编码→方向感知特征调制 | 分类/检测/分割/边缘检测 |
-| 06-19 | DEM | Dense Evolution Module | 多尺度变异生成→信息熵适应度评估→Top-k自然选择→进化融合 | 分类/检测/分割 |
-| 06-19 | PAM | Phase Alignment Module | Gabor相位估计→自适应相位偏移→相位一致性约束→残差融合 | 图像融合/恢复 |
-| 06-19 | FGM | Feature Gating Module | 协作门控→局部上下文感知→双向通道交互→稀疏激活 | 分类/检测/分割 |
-| 06-19 | MCM | Multi-Scale Context Module | 多尺度并行提取→自适应尺度权重→尺度间交互→全局-局部融合 | 分割/检测/分类 |
-| 06-19 | DWM | Dynamic Weight Module | 内容编码→调制因子预测→渐进式调制→平滑性约束 | 分类/检测/风格迁移 |
-| 06-19 | ERM | Edge Response Module | 可学习边缘检测→边缘增强→边缘-非边缘分离→自适应融合 | 边缘检测/分割/检测 |
-| 06-19 | STM | Spatial-Channel Transformer Module | 空间-通道联合编码→双向交叉注意力→位置编码增强→多头变换 | 分类/检测/分割 |
-| 06-19 | LHM | Local Histogram Module | 可微分soft binning→局部分布统计→分布感知增强→残差融合 | 分类/异常检测/纹理分析 |
-| 06-19 | CCM | Channel Correlation Module | 通道相关性矩阵→低秩近似→相关性引导增强→正则化 | 分类/检测/分割 |
-| 06-19 | RVM | Random Variation Module | 可控随机注入→温度控制→特征级增强→方差保持归一化 | 分类/检测/鲁棒性 |
-| 06-19 | KSM | Kernel Selection Module | 位置感知核选择→可微分软选择→多尺度并行→稀疏正则化 | 分类/检测/分割 |
-| 06-20 | OSM | Offset Spatial Mixing | 可变形偏移学习→偏移连续性约束→多尺度偏移融合→偏移感知聚合 | 分类/检测/分割 |
-| 06-20 | VGM | Variational Gaussian Mixing | 高斯分布建模→变分推断→不确定性感知混合→采样增强 | 分类/检测/分割 |
-| 06-20 | ABM | Adaptive Batch Module | 内容感知统计量→双重调制→轻量级预测→渐进式归一化 | 分类/风格迁移/域自适应 |
-| 06-20 | BFM | Batch Fusion Module | 批内统计→样本间注意力→自适应融合→计算高效 | 分类/度量学习/少样本学习 |
-| 06-20 | CVM | Channel Variance Module | 通道方差估计→方差引导增强→方差归一化→残差融合 | 分类/特征选择/通道剪枝 |
-| 06-20 | DPM | Dense Prediction Module | 全局-局部融合→自适应权重→密集预测头→多任务支持 | 分割/深度估计/检测 |
-| 06-20 | FTM | Frequency Transform Module | 轻量级Haar变换→频带选择→频域增强→逆变换融合 | 分类/恢复/去噪 |
-| 06-20 | GCM | Gradient Correlation Module | 多方向梯度→梯度相关性计算→相关性引导增强→结构保持 | 边缘检测/分割/纹理分析 |
-| 06-20 | JRM | Joint Reasoning Module | 多关系建模→关系交互→联合推理→推理门控 | 场景理解/视觉问答/关系检测 |
-| 06-20 | NAM | Neural Attention Module | 多尺度注意力→尺度间交互→注意力融合→神经调制 | 分类/检测/分割 |
-| 06-20 | ARM | Attention Refinement Module | 迭代精炼→残差精炼→精炼门控→收敛检测 | 分类/检测/分割 |
-| 06-20 | CLM | Context Learning Module | 多类型上下文→上下文选择→上下文交互→学习型融合 | 分割/场景理解/分类 |
-| 06-20 | DFM | Dynamic Feature Module | 内容编码→参数预测→动态处理→输出精炼 | 分类/风格迁移/域自适应 |
-| 06-20 | ESM | Enhanced Spatial Module | 空间位置编码→内容自适应采样→多尺度空间建模→空间一致性 | 检测/分割/姿态估计 |
-| 06-20 | FCM | Feature Correlation Module | 低秩相关性→相关性模式学习→相关性引导增强→输出精炼 | 分类/检测/分割 |
-| 06-20 | GFM | Global Fusion Module | 全局语义提取→局部细节增强→自适应融合→语义引导增强 | 分类/分割/场景理解 |
-| 06-20 | HPM | Hierarchical Prediction Module | 层次化预测→层次间传递→渐进式精炼→多层次融合 | 分割/检测/深度估计 |
-| 06-20 | IPM | Iterative Processing Module | 迭代处理→残差累积→迭代门控→自适应迭代次数 | 恢复/去噪/超分辨率 |
-| 06-20 | JSM | Joint Selection Module | 空间选择→通道选择→选择一致性→联合稀疏激活 | 分类/检测/分割 |
-| 06-20 | KBM | Knowledge Bridge Module | 知识编码→语义对齐→桥接传递→自适应桥接强度 | 多尺度融合/跨层传递 |
+---
 
-## 使用方法
+## 🧠 模块分类
 
-每个模块均可作为即插即用组件嵌入现有网络：
+```mermaid
+mindmap
+  root((vision-blocks))
+    注意力与调制
+      SRM
+      NAM
+      WAM
+      ARM
+      SSM
+      NLM
+      STM
+      BQA
+      SLA
+      GSA
+      HAT
+      CST
+      SLT
+      HYC
+      SGT
+    门控与通道选择
+      CGM
+      GFF
+      PGM
+      JSM
+      FGM
+      CRM
+      CCM
+      CVM
+      DGM
+      FEM
+      SDM
+      TFB
+    频域与小波
+      AFM
+      CFM
+      FIM
+      FTM
+      PCM
+      PAM
+      WDM
+      CWB
+      FPG
+      TLP
+      FSF
+      WLS
+    多尺度与上下文
+      AGM
+      CIM
+      CLM
+      DRS
+      DSM
+      IGM
+      MCM
+      KSM
+      HTM
+      UCM
+    融合与交互
+      BFM
+      GFM
+      KBM
+      TSFM
+      RGM
+      PDR
+      CFA
+      WMF
+    空间结构与统计
+      ESM
+      OSM
+      LCR
+      BSM
+      SAM
+      SUM
+      LVM
+      SGM
+      CAM
+      DFA
+      ERM
+      EDM
+      OEM
+      ABM
+      EEM
+      QEM
+      LHM
+      KFM
+      MPM
+      RAM
+      VGM
+      RVM
+      RDM
+    动态与递归
+      DFM
+      DWM
+      IRM
+      IPM
+      PFA
+      RCM
+      RIM
+    相关性与推理
+      FCM
+      GCM
+      DPM
+      HPM
+      JRM
+    其他算子与损失
+      DEM
+      TCM
+      DPS
+      SPA
+      CKA
+      ELN
+      AUG
+      SLU
+      L2B
+      HLU
+      RKG
+      LKS
+      SGN
+      SFI
+      VPT
+      SAE
+      DIP
+      DRL
+      HBN
+      MIE
+      LTF
+      ZSM
+```
+
+| 类别 | 说明 | 代表模块 |
+|------|------|----------|
+| 🎯 **注意力与调制** | 通道 / 空间 / 全局注意力、非局部、槽注意力、超连接 | SRM · WAM · BQA · SLA · GSA · SLT · HYC |
+| 🚪 **门控与通道选择** | SE 系、条件原型、渐进门控、通道相关性 | CGM · PGM · CRM · TFB |
+| 🌊 **频域与小波** | DCT / FFT / Haar 小波、相位处理、低通滤波 | AFM · FIM · WDM · CWB · FPG · TLP · FSF |
+| 🔍 **多尺度与上下文** | 感受野选择、粗细互调、上下文混合 | DRS · DSM · CIM · UCM |
+| 🔗 **融合与交互** | 多分支 / 跨模态 / 全局-局部融合 | GFF · TSFM · CFA · WMF |
+| 📐 **空间结构与统计** | 边缘、方差、熵、直方图、归一化 | DFA · SGM · LVM · QEM · KFM |
+| 🔁 **动态与递归** | 动态权重、专家路由、递归 / 渐进精炼 | IRM · RIM · PFA · DWM |
+| 🧮 **相关性与推理** | 特征 / 梯度相关性、密集预测、联合推理 | FCM · GCM · DPM · JRM |
+| 🧰 **其他算子与损失** | 进化、补全、移位、位置对齐、激活、损失、增强、后处理 | DEM · TCM · DPS · SPA · CKA · ELN · AUG · SLU · L2B · HLU · RKG |
+
+---
+
+## 📊 统计速览
+
+<div align="center">
+
+| 📦 模块总数 | 🧪 原创 | 📄 论文提取 | 🔌 BCL 时序适配器 |
+|:-----------:|:------:|:----------:|:-----------------:|
+| **114** | **77** | **37** | **38** |
+
+</div>
+
+**论文提取模块 · 会议分布**
+
+| 会议 | 数量 | 模块 |
+|------|:----:|------|
+| CVPR 2026 | 12 | BQA · ELN · FPG · SLA · SLU · L2B · FSF · LKS · SGN · SFI · VPT · SAE |
+| ECCV 2026 | 9 | CFA · CST · DPS · HAT · SLT · SPA · HLU · DIP · DRL |
+| ICCV 2025 | 7 | CKA · CWB · GSA · TFB · UCM · MIE · LTF |
+| NeurIPS 2026 | 3 | AUG · HYC · WMF |
+| NeurIPS 2025 / JMLR | 6 | TLP · RKG · HBN · SGT · ZSM · WLS |
+
+**许可证分布（论文提取模块）**
+
+| 许可证 | 数量 |
+|--------|:----:|
+| MIT | 24 |
+| Apache-2.0 | 12 |
+| BSD-3-Clause | 1 |
+
+---
+
+## 📚 模块总览
+
+### A. 顶会论文提取模块
+
+> 从 CVPR 2026 / ECCV 2026 / NeurIPS 2026-2025 / ICCV 2025 论文官方代码中等价提取。
+> **请引用原论文**；代码版权归原仓库许可证约束。
+
+| 模块 | 论文 | 会议 | 许可证 | 核心思想 | 代码文件 |
+|------|------|------|--------|----------|----------|
+| **BQA** | [BinaryAttention: One-Bit QK-Attention for Vision and Diffusion Transformers](https://arxiv.org/abs/2603.09582) | CVPR 2026 | Apache-2.0 | 1-bit QK 量化注意力，压缩 softmax 注意力的算力与访存瓶颈 | [`blocks/BQA/bqa.py`](blocks/BQA/bqa.py) |
+| **ELN** | [Enhancing Out-of-Distribution Detection with Extended Logit Normalization](https://arxiv.org/abs/2504.11434) | CVPR 2026 | MIT | 扩展 Logit 归一化**损失**（hyperparameter-free），提升 OOD 检测 | [`blocks/ELN/eln.py`](blocks/ELN/eln.py) |
+| **FPG** | [PFGNet: A Fully Convolutional Frequency-Guided Peripheral Gating Network](https://arxiv.org/abs/2602.20537) | CVPR 2026 | Apache-2.0 | 频率分解（Sobel/Laplacian/局部方差）引导中心/外周门控 | [`blocks/FPG/fpg.py`](blocks/FPG/fpg.py) |
+| **SLA** | [SAT: Selective Aggregation Transformer for Image Super-Resolution](https://arxiv.org/abs/2604.07994) | CVPR 2026 Findings | MIT | 聚类合并 token 的选择性聚合注意力，降低超分注意力开销 | [`blocks/SLA/sla.py`](blocks/SLA/sla.py) |
+| **CFA** | [AMG-Fuse: Multi-modality Image Fusion under Adverse Weather](https://arxiv.org/abs/2606.26812) | ECCV 2026 | MIT | 通道维注意力 + SE 门控融合，恶劣天气可见光-红外融合 | [`blocks/CFA/cfa.py`](blocks/CFA/cfa.py) |
+| **CST** | [CUST: Clustered Unit-level Similarity Transformer for Lightweight Image SR](https://arxiv.org/abs/2607.11088) | ECCV 2026 | MIT | 聚簇单元级相似度注意力：簇分配 + 同簇掩码滑窗 KV | [`blocks/CST/cst.py`](blocks/CST/cst.py) |
+| **DPS** | [SAM+D: Parameter-Efficient Dimensional Lifting of SAM via Depth-Routed LoRA](https://arxiv.org/abs/2607.29033) | ECCV 2026 | MIT | 零参数邻域深度移位算子（boundary-preserving shift） | [`blocks/DPS/dps.py`](blocks/DPS/dps.py) |
+| **HAT** | [AMG-Fuse: Multi-modality Image Fusion under Adverse Weather](https://arxiv.org/abs/2606.26812) | ECCV 2026 | MIT | 动态直方图自注意力：排序 + box/交错分组双分支 | [`blocks/HAT/hat.py`](blocks/HAT/hat.py) |
+| **SLT** | [SSync: Selective Synergistic Learning for Video Object-Centric Learning](https://arxiv.org/abs/2606.15527) | ECCV 2026 | MIT | 槽注意力（slot attention）：槽间竞争 + GRU 更新 | [`blocks/SLT/slt.py`](blocks/SLT/slt.py) |
+| **SPA** | [HRDiT: Training-Free High-Resolution Image Generation with Off-the-Shelf DiT](https://arxiv.org/abs/2608.07003) | ECCV 2026 | MIT | bundle 位置 id 对齐变体平均（RoPE-friendly 位置对齐） | [`blocks/SPA/spa.py`](blocks/SPA/spa.py) |
+| **CKA** | [SL²A-INR: Single-Layer Learnable Activation for Implicit Neural Representation](https://arxiv.org/abs/2409.10836) | ICCV 2025 | MIT | Chebyshev 多项式可学习激活（ChebyKAN 风格） | [`blocks/CKA/cka.py`](blocks/CKA/cka.py) |
+| **CWB** | [CWNet: Causal Wavelet Network for Low-Light Image Enhancement](https://github.com/bywlzts/CWNet-Causal-Wavelet-Network) | ICCV 2025 | MIT | 因果 Haar 小波分解-增强-重建（LL 增强 + 高频细节） | [`blocks/CWB/cwb.py`](blocks/CWB/cwb.py) |
+| **GSA** | [GREAT-Stereo: Global Regulation and Excitation via Attention Tuning](https://openaccess.thecvf.com/content/ICCV2025/papers/Li_Global_Regulation_and_Excitation_via_Attention_Tuning_for_Stereo_Matching_ICCV_2025_paper.pdf) | ICCV 2025 | Apache-2.0 | sink competition 全局竞争重归一化空间注意力 | [`blocks/GSA/gsa.py`](blocks/GSA/gsa.py) |
+| **TFB** | [TinyNeXt: An Efficient Hybrid Vision Transformer for TinyML Applications](https://openaccess.thecvf.com/content/ICCV2025/papers/Zeng_An_Efficient_Hybrid_Vision_Transformer_for_TinyML_Applications_ICCV_2025_paper.pdf) | ICCV 2025 | MIT | SE 门控 + DW 卷积 + MLP 三残差轻量 CNN 块（实现类 SEB） | [`blocks/TFB/seb.py`](blocks/TFB/seb.py) |
+| **UCM** | [UniConvNet: Expanding Effective Receptive Field while Maintaining Asymptotically Gaussian Distribution](https://arxiv.org/abs/2508.09000) | ICCV 2025 | MIT | 逐级扩张 DW 卷积核的卷积调制（ConvMod） | [`blocks/UCM/ucm.py`](blocks/UCM/ucm.py) |
+| **WMF** | [WaveMamba: Wave-Inspired Cross-Modal Fusion for Event-Image Segmentation](https://github.com/adeelferozmirza/WaveMamba) | NeurIPS 2026 | MIT | 波式多膨胀率 PointConv 门控融合（事件-图像跨模态） | [`blocks/WMF/wmf.py`](blocks/WMF/wmf.py) |
+| **SLU** | [LSM: Linear Recurrent Unit with Semantic Modulation for Image Super-Resolution](https://arxiv.org/abs/2606.19901) | CVPR 2026 Findings | Apache-2.0 | 语义字典调制的线性循环单元（LRU）+ 并行前缀扫描 | [`blocks/SLU/slu.py`](blocks/SLU/slu.py) |
+| **L2B** | [AD-GBC: Anisotropic Granular-Ball Skip-Connection Refiner](https://github.com/SiaShen-dot/AD-GBC) | CVPR 2026 | MIT | 各向异性可微粒球聚类重加权 + Lo2 局部算子块 | [`blocks/L2B/l2b.py`](blocks/L2B/l2b.py) |
+| **FSF** | [Spectral Scalpel: Frequency-Selective Filtering for Action Segmentation](https://github.com/HaoyuJi/SpecScalpel) | CVPR 2026 | MIT | FFT 实/虚可学习调制 + 动态路由选择性滤波（2D 适配） | [`blocks/FSF/fsf.py`](blocks/FSF/fsf.py) |
+| **HLU** | [Hybrid-LUT: Channel-Aware Hybrid Lookup Table and Filtering](https://arxiv.org/abs/2608.11646) | ECCV 2026 | MIT | 三线性 LUT 插值 + 通道统计 softmax 混合多 LUT | [`blocks/HLU/hlu.py`](blocks/HLU/hlu.py) |
+| **AUG** | [AuGhostmentation: The Eyes Never Stand Still—Why Should CNNs?](https://openreview.net/forum?id=UrYjjK6We7) | NeurIPS 2026 | MIT | 仿眼球微扫视的训练期随机位移增强（eval 恒等） | [`blocks/AUG/aug.py`](blocks/AUG/aug.py) |
+| **HYC** | [s2HC: Spectral-Sphere-Constrained Hyper-Connections](https://arxiv.org/abs/2603.20896) | NeurIPS 2026 | Apache-2.0 | 多流残差超连接（谱球约束 Cayley 混合矩阵） | [`blocks/HYC/hyc.py`](blocks/HYC/hyc.py) |
+| **TLP** | [Alias-Free ViT: Fractional Shift Invariance via Linear Attention](https://github.com/hmichaeli/alias_free_vit) | NeurIPS 2025 | Apache-2.0 | 截断式 FFT 低通滤波（抗混叠 / 分数平移等变） | [`blocks/TLP/tlp.py`](blocks/TLP/tlp.py) |
+| **RKG** | [RankSEG: Consistent Ranking-Based Framework for Segmentation](https://www.jmlr.org/papers/v24/22-0712.html) | JMLR 2023 + NeurIPS 2025 | BSD-3-Clause | Dice/IoU 一致性排序重标注后处理（RMA 求解器） | [`blocks/RKG/rkg.py`](blocks/RKG/rkg.py) |
+| **LKS** | [UCAN: Unified Convolutional Attention Network for Lightweight SR](https://arxiv.org/abs/2603.11680) | CVPR 2026 | Apache-2.0 | 大核空间注意力 LKSA：膨胀深度卷积核扩展有效感受野 | [`blocks/LKS/lks.py`](blocks/LKS/lks.py) |
+| **SGN** | [UCAN: Unified Convolutional Attention Network for Lightweight SR](https://arxiv.org/abs/2603.11680) | CVPR 2026 | Apache-2.0 | 空间门控特征融合 SGFN | [`blocks/SGN/sgn.py`](blocks/SGN/sgn.py) |
+| **SFI** | [LaDy: Lagrangian-Dynamic Informed Network via Spatial-Temporal Modulation](https://github.com/HaoyuJi/LaDy) | CVPR 2026 | MIT | 空间特征注入 + 动态融合（时空调制） | [`blocks/SFI/sfi.py`](blocks/SFI/sfi.py) |
+| **VPT** | [FOZO: Forward-Only Zeroth-Order Prompt Optimization for TTA](https://arxiv.org/abs/2603.04733) | CVPR 2026 | MIT | 视觉可学习 prompt 注入调制 | [`blocks/VPT/vpt.py`](blocks/VPT/vpt.py) |
+| **DIP** | [DIPE: Inter-Modal Distance Invariant Position Encoding](https://arxiv.org/abs/2603.10863) | ECCV 2026 | MIT | 跨模态距离不变 RoPE 相位重排 | [`blocks/DIP/dip.py`](blocks/DIP/dip.py) |
+| **DRL** | [SAM+D: Depth-Routed LoRA and Depth Shifting](https://arxiv.org/abs/2607.29033) | ECCV 2026 | MIT | 深度路由低秩专家混合适配器 | [`blocks/DRL/drl.py`](blocks/DRL/drl.py) |
+| **MIE** | [MobileIE: Extremely Lightweight ConvNet for Real-Time Enhancement](https://arxiv.org/abs/2507.01838) | ICCV 2025 | Apache-2.0 | 超轻量实时图像增强卷积块 | [`blocks/MIE/mie.py`](blocks/MIE/mie.py) |
+| **LTF** | [LUT-Fuse: Extremely Fast IR-VIS Fusion via Learnable LUTs](https://github.com/zyb5/LUT-Fuse) | ICCV 2025 | MIT | 可学习查找表融合单元 | [`blocks/LTF/ltf.py`](blocks/LTF/ltf.py) |
+| **HBN** | [HybridNorm: Stable and Efficient Transformer Training](https://arxiv.org/abs/2503.04598) | NeurIPS 2025 | Apache-2.0 | QKV-norm + FFN Post-Norm 混合归一化 | [`blocks/HBN/hbn.py`](blocks/HBN/hbn.py) |
+| **SGT** | [SeerAttention: Self-distilled Attention Gating](https://arxiv.org/abs/2410.13276) | NeurIPS 2025 | MIT | 块级可训练稀疏注意力门控 | [`blocks/SGT/sgt.py`](blocks/SGT/sgt.py) |
+| **ZSM** | [ZigzagPointMamba: Spatial-Semantic Mamba for Point Cloud](https://github.com/Rabbitttttt218/ZigzagPointMamba) | NeurIPS 2025 | Apache-2.0 | zigzag 空间-语义双向扫描混合 | [`blocks/ZSM/zsm.py`](blocks/ZSM/zsm.py) |
+| **WLS** | [WaLRUS: Wavelets for Long-range Representation Using SSM](https://github.com/echbaba/walrus) | NeurIPS 2025 | Apache-2.0 | 小波多尺度分解 + 逐子带状态空间递推 | [`blocks/WLS/wls.py`](blocks/WLS/wls.py) |
+| **SAE** | [Sparsemax SAE: Improving Sparse Autoencoder with Dynamic Attention](https://github.com/qyj-bkjx/Sparsemax-SAE) | CVPR 2026 | MIT | Sparsemax 动态稀疏自编码器（可解释稀疏特征） | [`blocks/SAE/sae.py`](blocks/SAE/sae.py) |
+
+<details>
+<summary>📌 论文提取约定（点击展开）</summary>
+
+- 等价重写：只允许改命名、删依赖、统一接口、硬编码参数化；**数值逻辑逐行保持**。
+- 头注释保留：论文标题 / venue / 链接 / 代码来源 / 原始许可证 / 模块出处 / 重构说明。
+- 若原实现天然为 1D/3D/token 接口，在类内 reshape 适配到 4D `[B,C,H,W]`。
+
+</details>
+
+### B. 原创模块
+
+> 由 **BUG423** 提出的实验性模块，**尚未发表**。欢迎在你的任务上做消融验证。
+
+<details open>
+<summary>点击折叠 / 展开完整表格（77 个原创）</summary>
+
+| 模块 | 名称 | 核心思想 | 适用任务 |
+|------|------|----------|----------|
+| **ABM** | Adaptive Batch Module · 自适应批归一化 | 内容感知统计量 → 双重调制均值方差 | 分类 / 风格迁移 |
+| **AFM** | Adaptive Frequency Modulation · 自适应频率调制 | 多核并行近似频带 + 空间自适应调制 | 分类 / 检测 / 恢复 |
+| **AGM** | Adaptive Granularity Module · 自适应粒度 | 粒度偏好图驱动粗细分支软插值 | 分类 / 检测 / 分割 |
+| **ARM** | Attention Refinement Module · 注意力精炼 | 迭代残差精炼 + 精炼门控 | 分类 / 检测 / 分割 |
+| **BFM** | Batch Fusion Module · 批融合 | 批内统计 + 样本间注意力交互 | 分类 / 度量学习 |
+| **BSM** | Bilateral Similarity Module · 双边相似度 | 邻域内容相似度双边加权聚合 | 分类 / 检测 / 分割 |
+| **CAM** | Contrast-Aware Module · 对比度感知 | 局部对比度驱动锐化 / 平滑双路径 | 分类 / 检测 / 边缘 |
+| **CCM** | Channel Correlation Module · 通道相关性 | 通道相关性矩阵低秩近似增强 | 分类 / 检测 / 分割 |
+| **CFM** | Channel Frequency Mixer · 通道频率混合 | DCT 频域跨通道频率信息交换 | 分类 / 检测 / 分割 |
+| **CGM** | Conditional Gating Module · 条件门控 | 可学习条件原型相似度驱动门控 | 分类 / 检测 / 分割 |
+| **CIM** | Contextual Information Modulator · 上下文调制 | 逐位置局部 vs 全局上下文混合比例 | 分类 / 检测 / 分割 |
+| **CLM** | Context Learning Module · 上下文学习 | 多类型上下文自适应选择融合 | 分割 / 场景理解 |
+| **CRM** | Channel Recalibration Module · 通道重校准 | 激活熵引导的通道重校准 | 分类 / 检测 / 分割 |
+| **CVM** | Channel Variance Module · 通道方差 | 方差引导通道增强 / 抑制 | 分类 / 特征选择 |
+| **DEM** | Dense Evolution Module · 密集进化 | 变异-选择-保留进化式密集连接 | 分类 / 检测 / 分割 |
+| **DFA** | Differential Feature Amplifier · 差异性特征放大 | 局部邻域差异驱动放大 | 分类 / 检测 / 边缘 |
+| **DFM** | Dynamic Feature Module · 动态特征 | 输入自适应动态参数生成 | 分类 / 风格迁移 |
+| **DGM** | Diversity-Guided Module · 多样性引导 | Gram 冗余分数抑制通道坍塌 | 分类 / 检测 / 分割 |
+| **DPM** | Dense Prediction Module · 密集预测 | 逐位置密集预测头 + 全局局部融合 | 分割 / 深度估计 |
+| **DRS** | Dynamic Receptive Field Selector · 动态感受野 | 逐位置软选择膨胀率 | 检测 / 分割 |
+| **DSM** | Dual-Scale Modulator · 双尺度调制 | 粗细双尺度互调（上下文 + 细节回注） | 分类 / 检测 / 分割 |
+| **DWM** | Dynamic Weight Module · 动态权重 | 轻量调制因子动态化卷积权重 | 分类 / 风格迁移 |
+| **EDM** | Entropy-Driven Module · 熵驱动 | 局部信息熵驱动增强 / 压缩 | 分类 / 检测 / 分割 |
+| **EEM** | Energy Equalization Module · 能量均衡 | 通道 + 空间能量双重均衡 | 分类 / 检测 / 分割 |
+| **ERM** | Edge Response Module · 边缘响应 | 显式边缘响应提取与增强 | 边缘 / 分割 / 检测 |
+| **ESM** | Enhanced Spatial Module · 增强空间 | 增强空间编码与自适应采样 | 检测 / 分割 / 姿态 |
+| **FCM** | Feature Correlation Module · 特征相关性 | 低秩全局相关性引导增强 | 分类 / 检测 / 分割 |
+| **FEM** | Feature Equilibrium Module · 特征均衡 | 通道均衡能量学习与调节 | 分类 / 检测 / 分割 |
+| **FGM** | Feature Gating Module · 特征门控 | 协作门控 + 双向通道交互 | 分类 / 检测 / 分割 |
+| **FIM** | Frequency Importance Module · 频率重要性 | DCT 频率重要性学习与重标定 | 分类 / 检测 / 分割 |
+| **FTM** | Frequency Transform Module · 频率变换 | Haar 近似 DCT + 频带选择增强 | 分类 / 恢复 / 去噪 |
+| **GCM** | Gradient Correlation Module · 梯度相关性 | 梯度方向相关性引导增强 | 边缘 / 分割 / 纹理 |
+| **GFF** | Gated Feature Fusion · 门控特征融合 | 三路并行 + 空间通道联合门控 | 分类 / 检测 / 分割 |
+| **GFM** | Global Fusion Module · 全局融合 | 全局语义与局部细节自适应融合 | 分类 / 分割 / 理解 |
+| **HPM** | Hierarchical Prediction Module · 层次预测 | 多层次预测渐进精炼融合 | 分割 / 检测 / 深度 |
+| **HTM** | Hierarchical Transformation Module · 层次变换 | 三阶段递进变换 + 信息桥接 | 分类 / 检测 / 分割 |
+| **IGM** | Information Gathering Module · 信息汇聚 | 多尺度深度可分离按需汇聚 | 分类 / 检测 / 分割 |
+| **IPM** | Iterative Processing Module · 迭代处理 | 迭代处理 + 残差累积 + 自适应次数 | 恢复 / 去噪 / 超分 |
+| **IRM** | Information Routing Module · 信息路由 | 多专家内容感知路由混合 | 分类 / 检测 / 分割 |
+| **JRM** | Joint Reasoning Module · 联合推理 | 空间 / 语义 / 上下文多关系联合推理 | 场景理解 / VQA |
+| **JSM** | Joint Selection Module · 联合选择 | 空间-通道联合稀疏选择 | 分类 / 检测 / 分割 |
+| **KBM** | Knowledge Bridge Module · 知识桥接 | 跨层语义对齐与桥接传递 | 多尺度融合 |
+| **KFM** | Kalman Filter Module · 卡尔曼滤波 | 预测-更新卡尔曼增益融合 | 分类 / 检测 / 分割 |
+| **KSM** | Kernel Selection Module · 核选择 | 逐位置可微分核大小软选择 | 分类 / 检测 / 分割 |
+| **LCR** | Local Context Reconstructor · 局部上下文重构 | 逐位置动态邻域重构权重 | 分类 / 检测 / 分割 |
+| **LHM** | Local Histogram Module · 局部直方图 | soft binning 可微分直方图 | 分类 / 异常检测 |
+| **LVM** | Local Variance Modulator · 局部方差调制 | 局部方差双路细节 / 抑制调制 | 分类 / 检测 / 分割 |
+| **MCM** | Multi-Scale Context Module · 多尺度上下文 | 自适应尺度权重多尺度上下文 | 分割 / 检测 / 分类 |
+| **MPM** | Momentum Propagation Module · 动量传播 | 动量参考 + 瞬态偏差感知调制 | 分类 / 检测 / 分割 |
+| **NAM** | Neural Attention Module · 神经注意力 | 多尺度注意力并行与融合 | 分类 / 检测 / 分割 |
+| **NLM** | Non-local Modulation Module · 非局部调制 | 非局部亲和力做调制而非聚合 | 分类 / 检测 / 分割 |
+| **OEM** | Order-Statistic Enhancement Module · 序统计增强 | 软排序序统计量鲁棒聚合 | 分类 / 检测 / 分割 |
+| **OSM** | Offset Spatial Mixing · 偏移空间混合 | 可变形偏移 + 连续性约束 | 分类 / 检测 / 分割 |
+| **PAM** | Phase Alignment Module · 相位对齐 | Gabor 局部相位估计与对齐 | 融合 / 恢复 |
+| **PCM** | Phase-Coherence Module · 相位一致性 | FFT 幅度 / 相位解耦差异化处理 | 分类 / 检测 / 分割 |
+| **PDR** | Polarized Dual Representation · 极化双表示 | 空间 / 语义双通路交叉门控 | 分类 / 检测 / 分割 |
+| **PFA** | Progressive Feature Aggregator · 渐进式聚合 | 两阶段粗调-精调残差累积 | 分类 / 检测 / 分割 |
+| **PGM** | Progressive Gating Module · 渐进式门控 | 三阶段级联门控（粗→中→细） | 分类 / 检测 / 分割 |
+| **QEM** | Quantile Enhancement Module · 分位数增强 | 分位数鲁棒归一化与增强 | 分类 / 检测 / 分割 |
+| **RAM** | Residual Amplification Module · 残差放大 | 基座-残差分解内容感知放大 | 分类 / 检测 / 分割 |
+| **RCM** | Recursive Convolution Module · 递归卷积 | 权重共享递归 + 终止门自适应深度 | 分类 / 检测 / 分割 |
+| **RDM** | Reaction-Diffusion Module · 反应扩散 | Turing 反应扩散动力学演化 | 分类 / 检测 / 分割 |
+| **RGM** | Reciprocal Guidance Module · 互惠引导 | 通道-空间双分支互惠引导 | 分类 / 检测 / 分割 |
+| **RIM** | Recursive Inference Module · 递归推理 | 权重共享递归推理逐步精炼 | 分类 / 检测 / 分割 |
+| **RVM** | Random Variation Module · 随机变异 | 特征级可控随机注入增强 | 分类 / 鲁棒性 |
+| **SAM** | Spatial Affinity Module · 空间亲和力 | 低秩空间亲和力信息传播 | 分割 / 检测 / 生成 |
+| **SDM** | Spectral Decomposition Module · 谱分解 | 通道协方差谱分解子空间滤波 | 分类 / 检测 / 分割 |
+| **SGM** | Spatial Gradient Modulator · 空间梯度调制 | Sobel 梯度幅值-方向联合调制 | 分类 / 检测 / 边缘 |
+| **SRM** | Selective Response Module · 选择性响应 | 位置敏感通道调制 + 软阈值稀疏 | 分类 / 检测 / 分割 |
+| **SSM** | Saliency-Guided Suppression · 显著性引导抑制 | 显著性软抑制重分配注意力预算 | 分类 / 检测 / 分割 |
+| **STM** | Spatial-Channel Transformer · 空间-通道变换 | 空间-通道双向交叉注意力 | 分类 / 检测 / 分割 |
+| **SUM** | Spatial Uncertainty Module · 空间不确定性 | 不确定性引导平滑 / 保持双路径 | 分类 / 检测 / 分割 |
+| **TCM** | Tensor Completion Module · 张量补全 | 低秩张量补全修复退化信息 | 分类 / 检测 / 分割 |
+| **TSFM** | Temporal-Spatial Fusion · 时序-空间融合 | 空间-通道交叉注意力联合建模 | 分类 / 检测 / 分割 |
+| **VGM** | Variational Gaussian Mixing · 变分高斯混合 | 变分推断不确定性感知混合 | 分类 / 检测 / 分割 |
+| **WAM** | Weighted Attention Module · 加权注意力 | 四模式注意力并行加权融合 | 分类 / 检测 / 分割 |
+| **WDM** | Wavelet Decomposition Module · 小波分解 | Haar 子带精炼 + 软阈值去噪 | 分类 / 恢复 / 去噪 |
+
+</details>
+
+---
+
+## 🚀 快速开始
+
+### 安装
+
+```bash
+git clone <repo-url>
+cd vision-blocks
+pip install torch   # Python >= 3.9, PyTorch >= 2.0
+```
+
+### 即插即用：插入 ResNet 残差块
 
 ```python
-from blocks.RIM.rim import RIM
 import torch
+from blocks.SRM.srm import SRM
+from blocks.DFA.dfa import DFA
 
-rim = RIM(channels=64, num_iterations=3)
+# 统一接口：channels 首参，[B, C, H, W] -> [B, C, H, W]
+srm = SRM(channels=64)
 x = torch.randn(1, 64, 32, 32)
-out = rim(x)
-print(out.shape)  # [1, 64, 32, 32]
+print(srm(x).shape)   # torch.Size([1, 64, 32, 32])
 ```
 
-## 环境依赖
+### 完整示例：ResNet-50 + 模块
 
-- Python >= 3.8
-- PyTorch >= 1.10
-- thop（可选，用于 FLOPs 统计）
+```python
+# 见 resnet_insert_example.py —— 在 Bottleneck 的 conv3 之后、残差相加之前插入
+from resnet_insert_example import ResNet50
 
-## 贡献指南
+model = ResNet50(num_classes=1000, attention_type='srm')   # 或 dfa / cim / gff / ...
+out = model(torch.randn(1, 3, 224, 224))
+print(out.shape)   # torch.Size([1, 1000])
+```
 
-欢迎提交 PR 添加新的神经网络模块。请参考 `blocks/` 下已有模块的格式，确保包含完整的文档说明和测试代码。
+### 论文提取模块
 
-## 许可证
+```python
+from blocks.BQA.bqa import BQA      # CVPR 2026 · BinaryAttention
+from blocks.SLA.sla import SLA      # CVPR 2026 Findings · SAT
+from blocks.WMF.wmf import WMF      # NeurIPS 2026 · WaveMamba
 
-MIT License
+x = torch.randn(2, 64, 16, 16)
+print(BQA(channels=64)(x).shape)
+print(SLA(channels=64)(x).shape)
+print(WMF(channels=64)(x).shape)
+```
+
+### BCL 时序适配器
+
+```python
+# 见 adapters/bcl/ —— 输入布局 [batch, channels, time]
+# 每个 *_bcl.py 文件带有最小可运行示例
+```
+
+---
+
+## 🔌 统一接口契约
+
+所有模块遵循同一契约（详见 `.mimocode/EXTRACT_SPEC.md`）：
+
+```python
+class ABBREV(nn.Module):
+    def __init__(self, channels: int, **task_specific_kwargs):
+        ...
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        x:   [B, C, H, W]
+        out: [B, C, H, W]   # 形状保持；例外必须在 docstring 中说明
+        """
+```
+
+**约定要点**
+
+1. 构造器**第一个参数必须是 `channels: int`**（in/out 不同时用 `in_channels, out_channels` 并写明）。
+2. `forward` 默认吃 4D `[B,C,H,W]`；天然 1D/3D/token 的模块在类内 reshape 适配。
+3. 默认超参与论文一致；额外超参只加必要的，并给论文默认值。
+4. **禁止改变数值逻辑**：重构只允许改命名、删死代码、统一 `nn` 用法、硬编码参数化、补 shape assert。
+5. 仅依赖 `torch` / `torch.nn` / `torch.nn.functional` / `typing` / `math`。
+
+**例外**：`ELN` 是损失函数，输出标量 loss 而非特征图（已在文件头注明）。
+
+---
+
+## 🧭 如何添加模块
+
+### 新增原创模块
+
+1. 创建目录 `blocks/<ABBREV>/<abbrev>.py`，`<ABBREV>` 为 2–5 个大写字母，不与现有目录冲突。
+2. 类名与简称一致：`class ABBREV(nn.Module)`。
+3. 文件头注明 `# 论文：原创模块，尚未发表` + 提出者 + 日期。
+4. Docstring 使用四段式：**一、模块简介 / 二、结构设计 / 三、论文写法参考 / 四、适用任务**。
+5. 文件末尾带 `count_parameters` 自检与 `if __name__ == '__main__'` 最小示例。
+
+### 提取论文模块
+
+1. 在文件头保留完整来源信息（论文标题 / venue / 链接 / GitHub / 许可证 / 模块出处 / 重构说明）。
+2. 只做**等价重写**：删第三方依赖、统一 4D 接口、参数化硬编码；数值逻辑逐行保持。
+3. 原始许可证写入头注释；对外文档注明「请引用原论文」。
+4. 详细规范见 [`.mimocode/EXTRACT_SPEC.md`](.mimocode/EXTRACT_SPEC.md)。
+
+---
+
+## 📄 许可证与引用
+
+### 许可证
+
+本仓库整体采用 **MIT License**。
+
+⚠️ **论文提取模块**保留其**原始许可证**（MIT / Apache-2.0，见上表「许可证」列）。
+使用这些模块时请同时遵守对应上游仓库的许可证条款。
+
+### 引用
+
+- **原创模块**（SRM、DFA、CIM 等 77 个）：尚未发表，如在论文中使用，请注明来源于本仓库并描述所用模块。
+- **论文提取模块**（BQA、SLA、FPG 等 37 个）：**必须引用原论文**（标题与链接见上表），代码版权归原作者所有。
+
+```bibtex
+@misc{vision-blocks,
+  title        = {vision-blocks: Plug-and-Play PyTorch Blocks for Vision and Time-Series},
+  note         = {Experimental module zoo; validate on your own task},
+  howpublished = {\url{<repo-url>}},
+  year         = {2026}
+}
+```
+
+---
+
+<div align="center">
+
+**⚠️ 免责声明**
+
+本仓库是实验性研究代码，模块效果因任务而异。
+不保证在任意数据集 / 任务上达到 SOTA，也**不构成**已通过同行评审的结论。
+使用前请在目标任务上独立验证，并保留原始论文引用。
+
+<br/>
+
+[![中文](https://img.shields.io/badge/README-中文-f5a623)](README.md)
+[![English](https://img.shields.io/badge/README-English-2f80ed)](README_EN.md)
+
+</div>
