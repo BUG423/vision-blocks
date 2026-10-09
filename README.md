@@ -157,6 +157,8 @@ SOTA/
 | 06-20 | IPM-BCL | Iterative Processing Module (BCL) | 迭代处理→残差累积→迭代门控→自适应迭代次数 | 时序分析 |
 | 06-20 | JSM-BCL | Joint Selection Module (BCL) | 时间选择→通道选择→选择一致性→联合稀疏激活 | 时序分析 |
 | 06-20 | KBM-BCL | Knowledge Bridge Module (BCL) | 知识编码→语义对齐→桥接传递→自适应桥接强度 | 时序分析 |
+| 10-09 | MDTA-BCL | Multi-DConv Head Transposed Attention (BCL) | 1D深度卷积时序上下文→跨通道转置注意力矩阵→线性O(C^2 T)复杂度 | 时序分析/长序列信号 |
+| 10-09 | EAN-BCL | External Attention Network (BCL) | 全局共享记忆词典Mk/Mv→双重归一化(Softmax+L1)→线性O(S·T)复杂度 | 时序分类/异常检测 |
 
 ## 使用方法
 

@@ -163,6 +163,8 @@ SOTA/
 | 06-20 | IPM-BCL | Iterative Processing Module (BCL) | Iterative processing → residual accumulation → iteration gate → adaptive iteration count | Time-Series Analysis |
 | 06-20 | JSM-BCL | Joint Selection Module (BCL) | Temporal selection → channel selection → selection consistency → joint sparse activation | Time-Series Analysis |
 | 06-20 | KBM-BCL | Knowledge Bridge Module (BCL) | Knowledge encoding → semantic alignment → bridge passing → adaptive bridge strength | Time-Series Analysis |
+| 10-09 | MDTA-BCL | Multi-DConv Head Transposed Attention (BCL) | 1D depthwise conv temporal context → cross-channel transposed attention → linear O(C^2 T) complexity | Time-Series Analysis / Long Sequences |
+| 10-09 | EAN-BCL | External Attention Network (BCL) | Global shared memory dictionaries Mk/Mv → double normalization (Softmax+L1) → linear O(S·T) complexity | Time-Series Classification / Anomaly Detection |
 
 ## Usage
 

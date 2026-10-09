@@ -19,3 +19,13 @@ Thumbs.db
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Extraction scratch (cloned sources + venv used during module extraction)
+.extract_src/
+
+# Extraction scratch
+.extract_tmp/
+
+# MiMoCode local
+.mimocode/
+
