@@ -10,10 +10,11 @@
 [![Python](https://img.shields.io/badge/Python-3.9%2B-3776ab?logo=python&logoColor=white)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c?logo=pytorch&logoColor=white)](https://pytorch.org/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![Modules](https://img.shields.io/badge/modules-114-informational)](#-模块总览)
-[![Paper](https://img.shields.io/badge/paper--sourced-37-blueviolet)](#a-顶会论文提取模块)
+[![Modules](https://img.shields.io/badge/modules-116-informational)](#-模块总览)
+[![Paper](https://img.shields.io/badge/paper--sourced-39-blueviolet)](#a-顶会论文提取模块)
 [![Original](https://img.shields.io/badge/original-77-orange)](#b-原创模块)
 <br/>
+[![TPAMI](https://img.shields.io/badge/TPAMI-2-blue)](#-统计速览)
 [![CVPR 2026](https://img.shields.io/badge/CVPR%202026-12-blue)](#-统计速览)
 [![ECCV 2026](https://img.shields.io/badge/ECCV%202026-9-blue)](#-统计速览)
 [![ICCV 2025](https://img.shields.io/badge/ICCV%202025-7-blue)](#-统计速览)
@@ -66,7 +67,7 @@ flowchart TB
     subgraph SRC["模块来源"]
         direction LR
         A["🧪 原创模块<br/>77 个 · proposer BUG423"]
-        B["📄 顶会论文提取<br/>36 个 · CVPR / ECCV / ICCV / NeurIPS"]
+        B["📄 顶会/顶刊论文提取<br/>39 个 · TPAMI / CVPR / ECCV / ICCV / NeurIPS"]
     end
 
     subgraph REPO["vision-blocks 仓库"]
@@ -133,6 +134,8 @@ mindmap
       SLT
       HYC
       SGT
+      MDTA
+      EAN
     门控与通道选择
       CGM
       GFF
@@ -244,7 +247,7 @@ mindmap
 
 | 类别 | 说明 | 代表模块 |
 |------|------|----------|
-| 🎯 **注意力与调制** | 通道 / 空间 / 全局注意力、非局部、槽注意力、超连接 | SRM · WAM · BQA · SLA · GSA · SLT · HYC |
+| 🎯 **注意力与调制** | 通道 / 空间 / 全局注意力、非局部、槽注意力、超连接、转置注意力、外部注意力 | SRM · WAM · BQA · SLA · GSA · SLT · HYC · MDTA · EAN |
 | 🚪 **门控与通道选择** | SE 系、条件原型、渐进门控、通道相关性 | CGM · PGM · CRM · TFB |
 | 🌊 **频域与小波** | DCT / FFT / Haar 小波、相位处理、低通滤波 | AFM · FIM · WDM · CWB · FPG · TLP · FSF |
 | 🔍 **多尺度与上下文** | 感受野选择、粗细互调、上下文混合 | DRS · DSM · CIM · UCM |
@@ -262,14 +265,15 @@ mindmap
 
 | 📦 模块总数 | 🧪 原创 | 📄 论文提取 | 🔌 BCL 时序适配器 |
 |:-----------:|:------:|:----------:|:-----------------:|
-| **114** | **77** | **37** | **38** |
+| **116** | **77** | **39** | **40** |
 
 </div>
 
-**论文提取模块 · 会议分布**
+**论文提取模块 · 期刊与会议分布**
 
-| 会议 | 数量 | 模块 |
-|------|:----:|------|
+| 期刊 / 会议 | 数量 | 模块 |
+|-------------|:----:|------|
+| IEEE TPAMI | 2 | MDTA · EAN |
 | CVPR 2026 | 12 | BQA · ELN · FPG · SLA · SLU · L2B · FSF · LKS · SGN · SFI · VPT · SAE |
 | ECCV 2026 | 9 | CFA · CST · DPS · HAT · SLT · SPA · HLU · DIP · DRL |
 | ICCV 2025 | 7 | CKA · CWB · GSA · TFB · UCM · MIE · LTF |
@@ -280,21 +284,23 @@ mindmap
 
 | 许可证 | 数量 |
 |--------|:----:|
-| MIT | 24 |
+| MIT | 25 |
 | Apache-2.0 | 12 |
-| BSD-3-Clause | 1 |
+| BSD 系（Clear BSD / BSD-3-Clause） | 2 |
 
 ---
 
 ## 📚 模块总览
 
-### A. 顶会论文提取模块
+### A. 顶会/顶刊论文提取模块
 
-> 从 CVPR 2026 / ECCV 2026 / NeurIPS 2026-2025 / ICCV 2025 论文官方代码中等价提取。
+> 从 IEEE TPAMI / CVPR 2026 / ECCV 2026 / NeurIPS 2026-2025 / ICCV 2025 论文官方代码中等价提取。
 > **请引用原论文**；代码版权归原仓库许可证约束。
 
-| 模块 | 论文 | 会议 | 许可证 | 核心思想 | 代码文件 |
-|------|------|------|--------|----------|----------|
+| 模块 | 论文 | 会议 / 期刊 | 许可证 | 核心思想 | 代码文件 |
+|------|------|------------|--------|----------|----------|
+| **MDTA** | [Restormer: Efficient Transformer for High-Resolution Image Restoration](https://arxiv.org/abs/2111.09881) | IEEE TPAMI 2022 | MIT | 深度卷积嵌入局部空间上下文，通道维转置自注意力（O(C^2 HW) 线性复杂度） | [`blocks/MDTA/mdta.py`](blocks/MDTA/mdta.py) |
+| **EAN** | [Beyond Self-Attention: External Attention Using Two Linear Layers for Visual Tasks](https://arxiv.org/abs/2105.02358) | IEEE TPAMI 2023 | Clear BSD | 双外置共享记忆单元与双重归一化（Double Normalization），线性复杂度 O(S·N) | [`blocks/EAN/ean.py`](blocks/EAN/ean.py) |
 | **BQA** | [BinaryAttention: One-Bit QK-Attention for Vision and Diffusion Transformers](https://arxiv.org/abs/2603.09582) | CVPR 2026 | Apache-2.0 | 1-bit QK 量化注意力，压缩 softmax 注意力的算力与访存瓶颈 | [`blocks/BQA/bqa.py`](blocks/BQA/bqa.py) |
 | **ELN** | [Enhancing Out-of-Distribution Detection with Extended Logit Normalization](https://arxiv.org/abs/2504.11434) | CVPR 2026 | MIT | 扩展 Logit 归一化**损失**（hyperparameter-free），提升 OOD 检测 | [`blocks/ELN/eln.py`](blocks/ELN/eln.py) |
 | **FPG** | [PFGNet: A Fully Convolutional Frequency-Guided Peripheral Gating Network](https://arxiv.org/abs/2602.20537) | CVPR 2026 | Apache-2.0 | 频率分解（Sobel/Laplacian/局部方差）引导中心/外周门控 | [`blocks/FPG/fpg.py`](blocks/FPG/fpg.py) |
@@ -577,9 +583,9 @@ class ABBREV(nn.Module):
 
 | 许可证 | 模块数 | 说明 |
 |--------|:------:|------|
-| MIT | 24 | 可自由使用，保留版权声明 |
+| MIT | 25 | 可自由使用，保留版权声明（含 MDTA 等） |
 | Apache-2.0 | 12 | 可自由使用，保留版权声明与 NOTICE |
-| BSD-3-Clause | 1 | `RKG`（RankSEG），可自由使用，保留版权声明 |
+| BSD 系（Clear BSD / BSD-3-Clause） | 2 | `RKG` (BSD-3-Clause), `EAN` (The Clear BSD License)，可自由使用，保留版权声明 |
 
 使用这些模块时，请同时遵守对应上游许可证条款；每个文件头部的 `# 原始许可证` 为该模块的权威声明。
 
@@ -590,9 +596,21 @@ class ABBREV(nn.Module):
 | 你使用的模块 | 需要引用 |
 |--------------|----------|
 | **原创模块**（SRM、DFA、CIM 等 77 个） | 本仓库（下方 BibTeX） |
-| **论文提取模块**（BQA、FPG、RKG 等 37 个） | **原论文** + 本仓库 |
+| **论文提取模块**（MDTA、EAN、BQA、FPG 等 39 个） | **原论文** + 本仓库 |
 
-**论文提取模块**的论文标题、venue、链接见上表「A. 顶会论文提取模块」；各文件头注释也带有同源信息。示例（以 `BQA` 为例，请按所用模块替换）：
+**论文提取模块**的论文标题、venue、链接见上表「A. 顶会/顶刊论文提取模块」；各文件头注释也带有同源信息。示例（以 `MDTA` / `BQA` 为例，请按所用模块替换）：
+
+```bibtex
+@article{zamir2022restormer,
+  title   = {Restormer: Efficient Transformer for High-Resolution Image Restoration},
+  author  = {Zamir, Syed Waqas and Arora, Aditya and Khan, Salman and Hayat, Munawar and Khan, Fahad Shahbaz and Yang, Ming-Hsuan},
+  journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  volume  = {45},
+  number  = {2},
+  pages   = {2013--2029},
+  year    = {2022}
+}
+```
 
 ```bibtex
 @inproceedings{xiao2026binaryattention,

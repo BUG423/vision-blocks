@@ -10,10 +10,11 @@
 [![Python](https://img.shields.io/badge/Python-3.9%2B-3776ab?logo=python&logoColor=white)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c?logo=pytorch&logoColor=white)](https://pytorch.org/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![Modules](https://img.shields.io/badge/modules-114-informational)](#-module-at-a-glance)
-[![Paper](https://img.shields.io/badge/paper--sourced-37-blueviolet)](#a-paper-sourced-modules)
+[![Modules](https://img.shields.io/badge/modules-116-informational)](#-module-at-a-glance)
+[![Paper](https://img.shields.io/badge/paper--sourced-39-blueviolet)](#a-paper-sourced-modules)
 [![Original](https://img.shields.io/badge/original-77-orange)](#b-original-modules)
 <br/>
+[![TPAMI](https://img.shields.io/badge/TPAMI-2-blue)](#-stats-strip)
 [![CVPR 2026](https://img.shields.io/badge/CVPR%202026-12-blue)](#-stats-strip)
 [![ECCV 2026](https://img.shields.io/badge/ECCV%202026-9-blue)](#-stats-strip)
 [![ICCV 2025](https://img.shields.io/badge/ICCV%202025-7-blue)](#-stats-strip)
@@ -67,7 +68,7 @@ flowchart TB
     subgraph SRC["Module sources"]
         direction LR
         A["🧪 Original blocks<br/>77 · proposer BUG423"]
-        B["📄 Paper-extracted<br/>36 · CVPR / ECCV / ICCV / NeurIPS"]
+        B["📄 Paper-extracted<br/>39 · TPAMI / CVPR / ECCV / ICCV / NeurIPS"]
     end
 
     subgraph REPO["vision-blocks repository"]
@@ -135,6 +136,8 @@ mindmap
       SLT
       HYC
       SGT
+      MDTA
+      EAN
     Gating and Channel Selection
       CGM
       GFF
@@ -246,7 +249,7 @@ mindmap
 
 | Category | Description | Representative blocks |
 |----------|-------------|----------------------|
-| 🎯 **Attention & Modulation** | Channel / spatial / global attention, non-local, slot attention, hyper-connections | SRM · WAM · BQA · SLA · GSA · SLT · HYC |
+| 🎯 **Attention & Modulation** | Channel / spatial / global attention, non-local, slot attention, hyper-connections, transposed attention, external attention | SRM · WAM · BQA · SLA · GSA · SLT · HYC · MDTA · EAN |
 | 🚪 **Gating & Channel Selection** | SE-style, conditional prototypes, progressive gating, channel correlation | CGM · PGM · CRM · TFB |
 | 🌊 **Frequency & Wavelet** | DCT / FFT / Haar wavelet, phase processing, low-pass filtering | AFM · FIM · WDM · CWB · FPG · TLP · FSF |
 | 🔍 **Multi-scale & Context** | Receptive-field selection, coarse-fine coupling, context mixing | DRS · DSM · CIM · UCM |
@@ -264,14 +267,15 @@ mindmap
 
 | 📦 Total blocks | 🧪 Original | 📄 Paper-sourced | 🔌 BCL adapters |
 |:---------------:|:-----------:|:----------------:|:---------------:|
-| **114** | **77** | **37** | **38** |
+| **116** | **77** | **39** | **40** |
 
 </div>
 
-**Paper-sourced blocks · venue breakdown**
+**Paper-sourced blocks · journal & venue breakdown**
 
-| Venue | Count | Blocks |
-|-------|:-----:|--------|
+| Journal / Venue | Count | Blocks |
+|-----------------|:-----:|--------|
+| IEEE TPAMI | 2 | MDTA · EAN |
 | CVPR 2026 | 12 | BQA · ELN · FPG · SLA · SLU · L2B · FSF · LKS · SGN · SFI · VPT · SAE |
 | ECCV 2026 | 9 | CFA · CST · DPS · HAT · SLT · SPA · HLU · DIP · DRL |
 | ICCV 2025 | 7 | CKA · CWB · GSA · TFB · UCM · MIE · LTF |
@@ -282,9 +286,9 @@ mindmap
 
 | License | Count |
 |---------|:-----:|
-| MIT | 24 |
+| MIT | 25 |
 | Apache-2.0 | 12 |
-| BSD-3-Clause | 1 |
+| BSD family (Clear BSD / BSD-3-Clause) | 2 |
 
 ---
 
@@ -292,11 +296,13 @@ mindmap
 
 ### A. Paper-Sourced Modules
 
-> Equivalence-extracted from official code of CVPR 2026 / ECCV 2026 / NeurIPS 2026-2025 / ICCV 2025 papers.
+> Equivalence-extracted from official code of IEEE TPAMI / CVPR 2026 / ECCV 2026 / NeurIPS 2026-2025 / ICCV 2025 papers.
 > **Please cite the original papers**; code remains under the original upstream licenses.
 
-| Block | Paper | Venue | License | Core idea | Code |
-|-------|-------|-------|---------|-----------|------|
+| Block | Paper | Venue / Journal | License | Core idea | Code |
+|-------|-------|-----------------|---------|-----------|------|
+| **MDTA** | [Restormer: Efficient Transformer for High-Resolution Image Restoration](https://arxiv.org/abs/2111.09881) | IEEE TPAMI 2022 | MIT | Depthwise conv context embedding + channel transposed attention (O(C^2 HW) linear complexity) | [`blocks/MDTA/mdta.py`](blocks/MDTA/mdta.py) |
+| **EAN** | [Beyond Self-Attention: External Attention Using Two Linear Layers for Visual Tasks](https://arxiv.org/abs/2105.02358) | IEEE TPAMI 2023 | Clear BSD | Dual shared external memory units + double normalization, linear complexity O(S·N) | [`blocks/EAN/ean.py`](blocks/EAN/ean.py) |
 | **BQA** | [BinaryAttention: One-Bit QK-Attention for Vision and Diffusion Transformers](https://arxiv.org/abs/2603.09582) | CVPR 2026 | Apache-2.0 | 1-bit QK-quantized attention to cut softmax attention compute & memory | [`blocks/BQA/bqa.py`](blocks/BQA/bqa.py) |
 | **ELN** | [Enhancing Out-of-Distribution Detection with Extended Logit Normalization](https://arxiv.org/abs/2504.11434) | CVPR 2026 | MIT | Extended Logit Normalization **loss** (hyperparameter-free) for OOD detection | [`blocks/ELN/eln.py`](blocks/ELN/eln.py) |
 | **FPG** | [PFGNet: A Fully Convolutional Frequency-Guided Peripheral Gating Network](https://arxiv.org/abs/2602.20537) | CVPR 2026 | Apache-2.0 | Frequency decomposition (Sobel/Laplacian/local variance) guided center-periphery gating | [`blocks/FPG/fpg.py`](blocks/FPG/fpg.py) |
@@ -582,9 +588,9 @@ Original content of this repository is **MIT License** (see [LICENSE](LICENSE)).
 
 | License | Blocks | Notes |
 |---------|:------:|-------|
-| MIT | 24 | free use, keep copyright notice |
+| MIT | 25 | free use, keep copyright notice (including MDTA) |
 | Apache-2.0 | 12 | free use, keep copyright + NOTICE |
-| BSD-3-Clause | 1 | `RKG` (RankSEG), free use, keep copyright notice |
+| BSD family (Clear BSD / BSD-3-Clause) | 2 | `RKG` (BSD-3-Clause), `EAN` (The Clear BSD License), free use, keep copyright notice |
 
 When using these blocks, also honor the upstream license terms. The `# 原始许可证` line in each file header is the authoritative statement for that block.
 
@@ -595,11 +601,23 @@ When using these blocks, also honor the upstream license terms. The `# 原始许
 | Blocks you use | What to cite |
 |----------------|--------------|
 | **Original** (SRM, DFA, CIM and the other 77) | this repository (BibTeX below) |
-| **Paper-sourced** (BQA, FPG, RKG and the other 37) | **the original paper** + this repository |
+| **Paper-sourced** (MDTA, EAN, BQA, FPG and the other 37) | **the original paper** + this repository |
 
 Paper titles, venues, and links for paper-sourced blocks are in the
 "A. Paper-sourced modules" table above; each file header carries the same
-provenance. Example (shown for `BQA`; substitute the block you use):
+provenance. Example (shown for `MDTA` / `BQA`; substitute the block you use):
+
+```bibtex
+@article{zamir2022restormer,
+  title   = {Restormer: Efficient Transformer for High-Resolution Image Restoration},
+  author  = {Zamir, Syed Waqas and Arora, Aditya and Khan, Salman and Hayat, Munawar and Khan, Fahad Shahbaz and Yang, Ming-Hsuan},
+  journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  volume  = {45},
+  number  = {2},
+  pages   = {2013--2029},
+  year    = {2022}
+}
+```
 
 ```bibtex
 @inproceedings{xiao2026binaryattention,
