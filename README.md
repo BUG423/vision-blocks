@@ -11,14 +11,14 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c?logo=pytorch&logoColor=white)](https://pytorch.org/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 [![Modules](https://img.shields.io/badge/modules-116-informational)](#-模块总览)
-[![Paper](https://img.shields.io/badge/paper--sourced-39-blueviolet)](#a-顶会论文提取模块)
+[![Paper](https://img.shields.io/badge/paper--sourced-39-blueviolet)](#a-顶会顶刊论文提取模块)
 [![Original](https://img.shields.io/badge/original-77-orange)](#b-原创模块)
 <br/>
 [![TPAMI](https://img.shields.io/badge/TPAMI-2-blue)](#-统计速览)
 [![CVPR 2026](https://img.shields.io/badge/CVPR%202026-12-blue)](#-统计速览)
 [![ECCV 2026](https://img.shields.io/badge/ECCV%202026-9-blue)](#-统计速览)
 [![ICCV 2025](https://img.shields.io/badge/ICCV%202025-7-blue)](#-统计速览)
-[![NeurIPS 2026](https://img.shields.io/badge/NeurIPS%202026-3-blue)]<br/>
+[![NeurIPS 2026](https://img.shields.io/badge/NeurIPS%202026-3-blue)](#-统计速览)<br/>
 [![NeurIPS 2025](https://img.shields.io/badge/NeurIPS%202025-6-blue)](#-统计速览)
 
 一个系统整理、实现和验证神经网络功能模块的开源仓库，覆盖计算机视觉与时序数据任务。
@@ -51,8 +51,8 @@
 |:---:|:---|
 | 🧩 **即插即用** | 每个模块是独立的 `nn.Module`，插入任意 CNN / Transformer 骨干即可 |
 | 📐 **统一张量接口** | 默认 `[B, C, H, W] → [B, C, H, W]`，形状保持，构造器首参为 `channels` |
-| 🧪 **双来源模块** | 原创实验模块（BUG423 提出）+ 顶会论文等价提取（CVPR / ECCV / ICCV / NeurIPS） |
-| 🌊 **时序适配** | `adapters/bcl/` 提供 BCL 时序格式适配器，把 1D 模块接到时序流水线 |
+| 🧪 **双来源模块** | 原创实验模块（BUG423 提出）+ 顶会/顶刊论文等价提取（IEEE TPAMI / CVPR / ECCV / ICCV / NeurIPS） |
+| 🌊 **时序适配** | `adapters/bcl/`（及 `bcl` 分支）提供 BCL 时序格式适配器，把 1D 模块接到时序流水线 |
 | 📝 **文档完整** | 每个模块带四段式中文文档：简介 / 结构 / 论文写法 / 适用任务 |
 | ⚡ **零第三方依赖** | 纯 `torch` + `typing` + `math`，无 einops / timm / mamba 等外部依赖 |
 
@@ -463,11 +463,15 @@ print(srm(x).shape)                          # torch.Size([1, 64, 32, 32])
 ### 2. 论文提取模块：同一契约
 
 ```python
-from blocks.BQA.bqa import BQA      # CVPR 2026 · BinaryAttention（注意力）
+from blocks.MDTA.mdta import MDTA    # IEEE TPAMI 2022 · Restormer（多深度卷积头转置注意力）
+from blocks.EAN.ean import EAN      # IEEE TPAMI 2023 · EANet（外部注意力机制）
+from blocks.BQA.bqa import BQA      # CVPR 2026 · BinaryAttention（1-bit 量化注意力）
 from blocks.FPG.fpg import FPG      # CVPR 2026 · PFGNet（频域门控）
 from blocks.WMF.wmf import WMF      # NeurIPS 2026 · WaveMamba（跨模态融合）
 
 x = torch.randn(2, 64, 32, 32)
+print(MDTA(channels=64)(x).shape)   # [2, 64, 32, 32]
+print(EAN(channels=64)(x).shape)    # [2, 64, 32, 32]
 print(BQA(channels=64)(x).shape)    # [2, 64, 32, 32]
 print(FPG(channels=64)(x).shape)    # [2, 64, 32, 32]
 print(WMF(channels=64)(x).shape)    # [2, 64, 32, 32]
@@ -510,11 +514,23 @@ model = ResNet50(num_classes=1000, attention_type='srm')   # 或 dfa / cim / gff
 print(model(torch.randn(1, 3, 224, 224)).shape)             # [1, 1000]
 ```
 
-### 5. BCL 时序适配器
+### 5. BCL 时序适配器与模块
+
+本仓库提供针对一维时序数据（如传感器、心电、行情）的 BCL 格式支持（输入布局 `[batch, channels, time]`）：
+- 在 `main` 分支可通过 `adapters/bcl/` 直接调用；
+- 或切换至专属时序分支 `git checkout bcl` 获取独立时序工程。
 
 ```python
-# 见 adapters/bcl/ —— 输入布局 [batch, channels, time]
-# 每个 *_bcl.py 文件带有最小可运行示例
+import torch
+from adapters.bcl.mdta_bcl import MDTA_BCL   # Restormer MDTA 时序版
+from adapters.bcl.ean_bcl import EAN_BCL     # EANet 外部注意力时序版
+
+x_ts = torch.randn(1, 64, 128)               # [B, C, T]
+mdta_ts = MDTA_BCL(channels=64, seq_len=128)
+ean_ts = EAN_BCL(channels=64, seq_len=128)
+
+print("MDTA-BCL 输出:", mdta_ts(x_ts).shape) # [1, 64, 128]
+print("EAN-BCL  输出:", ean_ts(x_ts).shape)  # [1, 64, 128]
 ```
 
 ---
@@ -609,6 +625,16 @@ class ABBREV(nn.Module):
   number  = {2},
   pages   = {2013--2029},
   year    = {2022}
+}
+
+@article{guo2023beyond,
+  title   = {Beyond Self-Attention: External Attention Using Two Linear Layers for Visual Tasks},
+  author  = {Guo, Meng-Hao and Liu, Zheng-Ning and Lu, Cheng-Ze and Sheng, Quan-Zheng and Gao, Dong-Dong and Cheng, Ming-Ming and Hu, Shi-Min},
+  journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  volume  = {45},
+  number  = {5},
+  pages   = {5436--5447},
+  year    = {2023}
 }
 ```
 

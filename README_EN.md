@@ -18,7 +18,7 @@
 [![CVPR 2026](https://img.shields.io/badge/CVPR%202026-12-blue)](#-stats-strip)
 [![ECCV 2026](https://img.shields.io/badge/ECCV%202026-9-blue)](#-stats-strip)
 [![ICCV 2025](https://img.shields.io/badge/ICCV%202025-7-blue)](#-stats-strip)
-[![NeurIPS 2026](https://img.shields.io/badge/NeurIPS%202026-3-blue)]<br/>
+[![NeurIPS 2026](https://img.shields.io/badge/NeurIPS%202026-3-blue)](#-stats-strip)<br/>
 [![NeurIPS 2025](https://img.shields.io/badge/NeurIPS%202025-6-blue)](#-stats-strip)
 
 A curated open-source collection of neural-network building blocks for computer vision and time-series tasks.
@@ -52,8 +52,8 @@ A curated open-source collection of neural-network building blocks for computer 
 |:---:|:---|
 | 🧩 **Plug-and-play** | Every block is a self-contained `nn.Module`; drop it into any CNN / Transformer backbone |
 | 📐 **Unified tensor contract** | Default `[B, C, H, W] → [B, C, H, W]`, shape-preserving; first ctor arg is `channels` |
-| 🧪 **Two module sources** | Original experimental blocks (proposed by BUG423) + equivalence-extracted top-venue paper blocks |
-| 🌊 **Time-series adapters** | `adapters/bcl/` turns 1D modules into BCL time-series pipelines |
+| 🧪 **Two module sources** | Original experimental blocks (proposed by BUG423) + equivalence-extracted journal/conference blocks (IEEE TPAMI / CVPR / ECCV / ICCV / NeurIPS) |
+| 🌊 **Time-series adapters** | `adapters/bcl/` (and `bcl` branch) turn 1D modules into BCL time-series pipelines |
 | 📝 **Full docstrings** | Four-part Chinese docs per module: intro / structure / paper-writing notes / tasks |
 | ⚡ **Zero third-party deps** | Pure `torch` + `typing` + `math` — no einops / timm / mamba |
 
@@ -467,11 +467,15 @@ print(srm(x).shape)                          # torch.Size([1, 64, 32, 32])
 ### 2. Paper-sourced blocks: same contract
 
 ```python
-from blocks.BQA.bqa import BQA      # CVPR 2026 · BinaryAttention (attention)
+from blocks.MDTA.mdta import MDTA    # IEEE TPAMI 2022 · Restormer (transposed channel attention)
+from blocks.EAN.ean import EAN      # IEEE TPAMI 2023 · EANet (external attention)
+from blocks.BQA.bqa import BQA      # CVPR 2026 · BinaryAttention (1-bit quantized attention)
 from blocks.FPG.fpg import FPG      # CVPR 2026 · PFGNet (frequency gating)
 from blocks.WMF.wmf import WMF      # NeurIPS 2026 · WaveMamba (cross-modal fusion)
 
 x = torch.randn(2, 64, 32, 32)
+print(MDTA(channels=64)(x).shape)   # [2, 64, 32, 32]
+print(EAN(channels=64)(x).shape)    # [2, 64, 32, 32]
 print(BQA(channels=64)(x).shape)    # [2, 64, 32, 32]
 print(FPG(channels=64)(x).shape)    # [2, 64, 32, 32]
 print(WMF(channels=64)(x).shape)    # [2, 64, 32, 32]
@@ -515,11 +519,23 @@ model = ResNet50(num_classes=1000, attention_type='srm')   # or dfa / cim / gff 
 print(model(torch.randn(1, 3, 224, 224)).shape)             # [1, 1000]
 ```
 
-### 5. BCL time-series adapters
+### 5. BCL time-series adapters & modules
+
+This repository supports 1D sequential data (sensors, ECG, financial series) via the BCL format (layout `[batch, channels, time]`):
+- Use directly via `adapters/bcl/` on the `main` branch;
+- Or switch to the dedicated time-series branch: `git checkout bcl`.
 
 ```python
-# See adapters/bcl/ — input layout [batch, channels, time]
-# Each *_bcl.py file ships with a minimal runnable example
+import torch
+from adapters.bcl.mdta_bcl import MDTA_BCL   # Restormer MDTA temporal adapter
+from adapters.bcl.ean_bcl import EAN_BCL     # EANet external attention temporal adapter
+
+x_ts = torch.randn(1, 64, 128)               # [B, C, T]
+mdta_ts = MDTA_BCL(channels=64, seq_len=128)
+ean_ts = EAN_BCL(channels=64, seq_len=128)
+
+print("MDTA-BCL output:", mdta_ts(x_ts).shape) # [1, 64, 128]
+print("EAN-BCL  output:", ean_ts(x_ts).shape)  # [1, 64, 128]
 ```
 
 ---
@@ -616,6 +632,16 @@ provenance. Example (shown for `MDTA` / `BQA`; substitute the block you use):
   number  = {2},
   pages   = {2013--2029},
   year    = {2022}
+}
+
+@article{guo2023beyond,
+  title   = {Beyond Self-Attention: External Attention Using Two Linear Layers for Visual Tasks},
+  author  = {Guo, Meng-Hao and Liu, Zheng-Ning and Lu, Cheng-Ze and Sheng, Quan-Zheng and Gao, Dong-Dong and Cheng, Ming-Ming and Hu, Shi-Min},
+  journal = {IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  volume  = {45},
+  number  = {5},
+  pages   = {5436--5447},
+  year    = {2023}
 }
 ```
 
