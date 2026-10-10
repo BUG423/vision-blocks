@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🔷 vision-blocks
+# 🔷 other-blocks
 
 **Plug-and-Play PyTorch Blocks for Vision & Time-Series — an Experimental Module Zoo**
 

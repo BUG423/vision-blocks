@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🔷 vision-blocks
+# 🔷 other-blocks
 
 **即插即用的 PyTorch 视觉 / 时序模块库 —— 实验性模块动物园**
 
