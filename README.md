@@ -9,7 +9,7 @@
 <br/>
 [![Python](https://img.shields.io/badge/Python-3.9%2B-3776ab?logo=python&logoColor=white)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c?logo=pytorch&logoColor=white)](https://pytorch.org/)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC_BY--NC--ND_4.0-red.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 [![Modules](https://img.shields.io/badge/modules-116-informational)](#-模块总览)
 [![Paper](https://img.shields.io/badge/paper--sourced-39-blueviolet)](#a-顶会顶刊论文提取模块)
 [![Original](https://img.shields.io/badge/original-77-orange)](#b-原创模块)
@@ -41,7 +41,7 @@
 - [🚀 快速开始](#-快速开始)
 - [🔌 统一接口契约](#-统一接口契约)
 - [🧭 如何添加模块](#-如何添加模块)
-- [📄 许可证与引用](#-许可证与引用)
+- [📄 知识产权与开源协议](#-知识产权与开源协议)
 
 ---
 
@@ -589,21 +589,15 @@ class ABBREV(nn.Module):
 
 ---
 
-## 📄 许可证与引用
+## 📄 知识产权与开源协议
 
-### 许可证
+本项目遵循 **[Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/)** 严格非商业开源许可：
 
-本仓库原创内容采用 **MIT License**（见 [LICENSE](LICENSE)）。
+- ❌ **严禁商用**：任何个人或组织不得将本项目源码、编译产物或衍生版本用于任何商业盈利目的。
+- ❌ **禁止演绎与分发修改版**：未经授权不得散布基于本项目修改后的二次分发版本。
+- 🔒 **权利保留**：作者保留对本项目代码与架构的所有版权与法律追责权利。
 
-**论文提取模块保留其原始许可证**，与上表「许可证」列一一对应：
-
-| 许可证 | 模块数 | 说明 |
-|--------|:------:|------|
-| MIT | 25 | 可自由使用，保留版权声明（含 MDTA 等） |
-| Apache-2.0 | 12 | 可自由使用，保留版权声明与 NOTICE |
-| BSD 系（Clear BSD / BSD-3-Clause） | 2 | `RKG` (BSD-3-Clause), `EAN` (The Clear BSD License)，可自由使用，保留版权声明 |
-
-使用这些模块时，请同时遵守对应上游许可证条款；每个文件头部的 `# 原始许可证` 为该模块的权威声明。
+> 📌 **注**：论文提取模块在遵守 CC BY-NC-ND 4.0 整体非商业约束的前提下，保留原论文作者的学术署名与上游开源许可证（MIT / Apache-2.0 / BSD 等，详见各模块头部注释）。
 
 ### 引用
 

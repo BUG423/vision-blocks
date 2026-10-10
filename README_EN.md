@@ -9,7 +9,7 @@
 <br/>
 [![Python](https://img.shields.io/badge/Python-3.9%2B-3776ab?logo=python&logoColor=white)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c?logo=pytorch&logoColor=white)](https://pytorch.org/)
-[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC_BY--NC--ND_4.0-red.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 [![Modules](https://img.shields.io/badge/modules-116-informational)](#-module-at-a-glance)
 [![Paper](https://img.shields.io/badge/paper--sourced-39-blueviolet)](#a-paper-sourced-modules)
 [![Original](https://img.shields.io/badge/original-77-orange)](#b-original-modules)
@@ -42,7 +42,7 @@ A curated open-source collection of neural-network building blocks for computer 
 - [🚀 Quick Start](#-quick-start)
 - [🔌 Unified Interface Contract](#-unified-interface-contract)
 - [🧭 How to Add a Module](#-how-to-add-a-module)
-- [📄 License & Citation](#-license--citation)
+- [📄 License & Intellectual Property](#-license--intellectual-property)
 
 ---
 
@@ -594,21 +594,15 @@ class ABBREV(nn.Module):
 
 ---
 
-## 📄 License & Citation
+## 📄 License & Intellectual Property
 
-### License
+This project is licensed under the **[Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/)** Public License:
 
-Original content of this repository is **MIT License** (see [LICENSE](LICENSE)).
+- ❌ **Non-Commercial**: You may not use the material for commercial purposes under any circumstances.
+- ❌ **No Derivatives**: If you remix, transform, or build upon the material, you may not distribute the modified material.
+- 🔒 **All Rights Reserved**: The author reserves all copyright and legal rights to the project code and architecture.
 
-**Paper-sourced blocks retain their original licenses**, matching the License column above:
-
-| License | Blocks | Notes |
-|---------|:------:|-------|
-| MIT | 25 | free use, keep copyright notice (including MDTA) |
-| Apache-2.0 | 12 | free use, keep copyright + NOTICE |
-| BSD family (Clear BSD / BSD-3-Clause) | 2 | `RKG` (BSD-3-Clause), `EAN` (The Clear BSD License), free use, keep copyright notice |
-
-When using these blocks, also honor the upstream license terms. The `# 原始许可证` line in each file header is the authoritative statement for that block.
+> 📌 **Note**: Paper-sourced modules retain original author attribution and upstream licenses (MIT / Apache-2.0 / BSD) under the CC BY-NC-ND 4.0 umbrella; see individual module file headers for provenance details.
 
 ### Citation
 

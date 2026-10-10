@@ -1,32 +1,38 @@
-MIT License
+Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)
+Copyright (c) 2026 BUG423. All Rights Reserved.
+保留所有权利 · 严格禁止商业使用
 
-Copyright (c) 2026 BUG423 and vision-blocks contributors
+================================================================================
+【中文协议声明】
+本项目采用 CC BY-NC-ND 4.0（署名-非商业性使用-禁止演绎 4.0 国际许可）及保留所有权利条款。
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. 许可使用范围：
+   仅允许出于个人学习、学术交流、教学演示及非商业性研究所需的个人阅读、本地运行和学习测试。
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+2. 严格禁止商业使用 (Non-Commercial Strict)：
+   未经原作者明确书面授权，严禁任何形式的商业用途与营利行为，包括但不限于：
+   - 商业化销售、有偿软件分发、商业硬件预装或捆绑销售；
+   - 部署为对外收费的 SaaS 商业服务、云端平台或商业云托管；
+   - 将本项目代码作为任何闭源或商业软件/硬件产品的核心或组件；
+   - 以本项目为核心内容的盈利性培训、商业咨询或技术交付。
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+3. 禁止演绎与重新分发 (No Derivatives)：
+   若对本项目的源代码、界面、固件或设计进行了修改、转换或二次开发，您不得对外分发修改后的产物。
 
---------------------------------------------------------------------------------
-NOTE ON PAPER-SOURED MODULES
---------------------------------------------------------------------------------
-Modules under blocks/ that are extracted from published papers (see the
-"Paper-sourced modules" table in README.md) are derivative works of the
-original open-source implementations and remain subject to their original
-licenses (MIT / Apache-2.0 / BSD-3-Clause). See each file's header comment
-(`# 原始许可证`) for the authoritative license of that module. When the
-original license requires attribution, cite the original paper and keep the
-original copyright notice.
+4. 商业授权途径：
+   如需将本项目或其衍生方案用于任何商业场景，必须提前联系原作者（BUG423）获得正式书面授权。
+================================================================================
+【English Summary】
+This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International Public License (CC BY-NC-ND 4.0).
+
+You are free to:
+- Share — copy and redistribute the material in any medium or format for strictly non-commercial purposes.
+
+Under the following terms:
+- Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made.
+- NonCommercial — You may NOT use the material for commercial purposes under any circumstances.
+- NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.
+- No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
+
+For commercial use, licensing, or partnerships, please contact the copyright holder: BUG423.
+================================================================================
