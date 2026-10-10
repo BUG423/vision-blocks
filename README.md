@@ -1,33 +1,13 @@
-<div align="center">
-
 # 🔷 other-blocks
 
-**即插即用的 PyTorch 视觉 / 时序模块库 —— 实验性模块动物园**
-
-[![中文](https://img.shields.io/badge/README-中文-f5a623)](README.md)
-[![English](https://img.shields.io/badge/README-English-2f80ed)](README_EN.md)
-<br/>
 [![Python](https://img.shields.io/badge/Python-3.9%2B-3776ab?logo=python&logoColor=white)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c?logo=pytorch&logoColor=white)](https://pytorch.org/)
 [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC_BY--NC--ND_4.0-red.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 [![Modules](https://img.shields.io/badge/modules-116-informational)](#-模块总览)
 [![Paper](https://img.shields.io/badge/paper--sourced-39-blueviolet)](#a-顶会顶刊论文提取模块)
 [![Original](https://img.shields.io/badge/original-77-orange)](#b-原创模块)
-<br/>
-[![TPAMI](https://img.shields.io/badge/TPAMI-2-blue)](#-统计速览)
-[![CVPR 2026](https://img.shields.io/badge/CVPR%202026-12-blue)](#-统计速览)
-[![ECCV 2026](https://img.shields.io/badge/ECCV%202026-9-blue)](#-统计速览)
-[![ICCV 2025](https://img.shields.io/badge/ICCV%202025-7-blue)](#-统计速览)
-[![NeurIPS 2026](https://img.shields.io/badge/NeurIPS%202026-3-blue)](#-统计速览)<br/>
-[![NeurIPS 2025](https://img.shields.io/badge/NeurIPS%202025-6-blue)](#-统计速览)
 
-一个系统整理、实现和验证神经网络功能模块的开源仓库，覆盖计算机视觉与时序数据任务。
-
-> ⚠️ **诚实声明**：本仓库是**实验性研究代码**（experimental module zoo），
-> **并非**宣称达到 SOTA 或已经同行评审。原创模块尚未发表；论文提取模块仅做等价重写。
-> 使用前请在你的目标任务上独立验证效果。
-
-</div>
+> **other-blocks** 是一个系统整理、实现和验证神经网络功能模块的开源仓库，覆盖计算机视觉（2D）与时序数据（1D BCL 序列）感知任务的即插即用 PyTorch 神经网络模块动物园。
 
 ---
 
@@ -70,7 +50,7 @@ flowchart TB
         B["📄 顶会/顶刊论文提取<br/>39 个 · TPAMI / CVPR / ECCV / ICCV / NeurIPS"]
     end
 
-    subgraph REPO["vision-blocks 仓库"]
+    subgraph REPO["other-blocks 仓库"]
         direction TB
         BLK["blocks/ABBREV/abbrev.py<br/>视觉即插即用块"]
         BCL["adapters/bcl/<br/>BCL 时序适配器"]
@@ -644,11 +624,22 @@ class ABBREV(nn.Module):
 引用本仓库：
 
 ```bibtex
-@misc{vision-blocks,
-  title        = {vision-blocks: Plug-and-Play PyTorch Blocks for Vision and Time-Series},
-  author       = {BUG423 and vision-blocks contributors},
+@misc{other-blocks,
+  title        = {other-blocks: Plug-and-Play PyTorch Blocks for Vision and Time-Series},
+  author       = {BUG423 and other-blocks contributors},
   note         = {Experimental module zoo; validate on your own task},
-  howpublished = {\url{https://github.com/BUG423/vision-blocks}},
+  howpublished = {\url{https://github.com/BUG423/other-blocks}},
   year         = {2026}
 }
 ```
+
+---
+
+## 📄 知识产权与开源协议
+
+本项目遵循 **[Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/)** 严格非商业开源许可：
+
+- ❌ **严禁商用**：任何个人或组织不得将本项目源码、编译产物或衍生版本用于任何商业盈利目的。
+- ❌ **禁止演绎与分发修改版**：未经授权不得散布基于本项目修改后的二次分发版本。
+- 🔒 **权利保留**：作者保留对本平台代码与架构的所有版权与法律追责权利。
+
